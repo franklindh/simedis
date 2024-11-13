@@ -107,7 +107,7 @@
                     </li>
                 @elseif(Auth::guard('petugas')->user()->role == 'Poliklinik' || Auth::guard('petugas')->user()->role == 'Dokter')
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('pemeriksaan', 'diagnosis') ? 'active' : '' }}"
+                        <a class="nav-link {{ request()->routeIs('pemeriksaan', 'pemeriksaan.show') ? 'active' : '' }}"
                             href="{{ route('pemeriksaan') }}">
                             <i class="bi bi-calendar2-week-fill"></i>Pemeriksaan
                         </a>

@@ -29,7 +29,6 @@
         </div>
     </section>
 
-    <!-- Load Larapex Chart scripts -->
-    <script src="{{ $chart->cdn() }}"></script>
-    {{ $chart->script() }} {{-- Menyertakan script Larapex chart --}}
+    <script src="{{ LarapexChart::cdn() }}"></script>
+    {{ $chart->script() }}
 </x-app-layout>

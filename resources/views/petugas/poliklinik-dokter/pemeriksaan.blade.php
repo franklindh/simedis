@@ -40,11 +40,25 @@
                                     <td>{{ $item->nama_poli }}</td>
                                     <td>{{ $item->nama_pasien }}</td>
                                     <td>{{ $item->status }}</td>
-                                    <td>
-                                        <button class="btn btn-primary btn-lihat" data-bs-toggle="modal"
-                                            data-id="{{ $item->id_antrian }}"
-                                            data-bs-target="#lihatModal">Periksa</button>
-                                    </td>
+                                    @if ($item->status === 'Menunggu')
+                                        <td>
+                                            <button class="btn btn-primary btn-lihat" data-bs-toggle="modal"
+                                                data-id="{{ $item->id_antrian }}"
+                                                data-bs-target="#lihatModal">Periksa</button>
+                                        </td>
+                                    @elseif($item->status === 'Menunggu Diagnosis')
+                                        <td>
+                                            <button class="btn btn-primary btn-lihat" data-bs-toggle="modal"
+                                                data-id="{{ $item->id_antrian }}"
+                                                data-bs-target="#lihatModal">Periksa</button>
+                                        </td>
+                                    @elseif($item->status === 'Selesai' && Auth::guard('petugas')->user()->role === 'Dokter')
+                                        <td>
+                                            <button class="btn btn-primary btn-lihat" data-bs-toggle="modal"
+                                                data-id="{{ $item->id_antrian }}"
+                                                data-bs-target="#lihatModal">Lihat</button>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         @endif
@@ -201,7 +215,6 @@
                             <!-- Tombol di luar Tab -->
                             <div class="d-flex justify-content-end mt-3">
                                 <button type="button" id="editForm" class="btn btn-warning me-2">Edit</button>
-                                <button class="btn btn-secondary me-2">Batal</button>
                                 <button class="btn btn-success" type="submit">Simpan</button>
                             </div>
                         </form>
@@ -269,17 +282,40 @@
             });
         });
 
+        $('#lihatModal').on('hidden.bs.modal', function() {
+            // Reset semua input ketika modal ditutup
+            $('#lihat_keluhan').val('');
+            $('#lihat_keadaan_umum').val('');
+            $('#lihat_berat_badan').val('');
+            $('#lihat_suhu_badan').val('');
+            $('#lihat_tekanan_darah').val('');
+            $('#lihat_nadi').val('');
+            $('#rencana').val('');
+            $('#riwayat').val('');
+        });
+
         $('.btn-lihat').on('click', function() {
+            // Bersihkan dan jadikan semua input editable setiap kali modal dibuka
+            $('#lihat_keluhan').val('').removeAttr('readonly').attr('required', true);
+            $('#lihat_keadaan_umum').val('').removeAttr('readonly').attr('required', true);
+            $('#lihat_berat_badan').val('').removeAttr('readonly').attr('required', true);
+            $('#lihat_suhu_badan').val('').removeAttr('readonly').attr('required', true);
+            $('#lihat_tekanan_darah').val('').removeAttr('readonly').attr('required', true);
+            $('#lihat_nadi').val('').removeAttr('readonly').attr('required', true);
+            $('#rencana').val('').removeAttr('readonly').attr('required', true);
+            $('#riwayat').val('').removeAttr('readonly').attr('required', true);
+
             var antrianId = $(this).data('id'); // Ambil ID antrian dari atribut data-id
             $('#id_antrian').val(antrianId); // Isi input hidden dengan ID antrian
+
             // Lakukan AJAX request untuk mengambil data pemeriksaan
             $.ajax({
                 url: "{{ route('pemeriksaan.detailById', ':id') }}".replace(':id',
                     antrianId), // Mengambil route dari Laravel
                 type: 'GET',
                 success: function(data) {
-                    if (data) {
-                        // Jika data ditemukan, isi form dan set input menjadi readonly
+                    if (data && data.keluhan) { // Pastikan data tidak kosong
+                        // Isi form dan jadikan readonly jika data ditemukan
                         $('#lihat_keluhan').val(data.keluhan).attr('readonly', true);
                         $('#lihat_keadaan_umum').val(data.keadaan_umum).attr('readonly',
                             true);
@@ -291,9 +327,8 @@
                         $('#lihat_nadi').val(data.nadi).attr('readonly', true);
                         $('#rencana').val(data.tindakan).attr('readonly', true);
                         $('#riwayat').val(data.riwayat).attr('readonly', true);
-                        // $('#lihat_diagnosa_utama').innerHTML = data.diagnosis);
                     } else {
-                        // Jika data tidak ditemukan, pastikan input tidak readonly dan set inputan menjadi required
+                        // Jika data tidak ditemukan, kosongkan input dan jadikan editable
                         $('#lihat_keluhan').val('').removeAttr('readonly').attr('required',
                             true);
                         $('#lihat_keadaan_umum').val('').removeAttr('readonly').attr(
@@ -306,146 +341,147 @@
                             'required', true);
                         $('#lihat_nadi').val('').removeAttr('readonly').attr('required',
                             true);
-                        $('#rencana').val('').removeAttr('readonly').attr('required',
-                            true);
-                        $('#riwayat').val('').removeAttr('readonly').attr('required',
-                            true);
+                        $('#rencana').val('').removeAttr('readonly').attr('required', true);
+                        $('#riwayat').val('').removeAttr('readonly').attr('required', true);
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.log(error); // Untuk debugging jika terjadi kesalahan
+                    console.error("AJAX Error:", xhr, status,
+                        error); // Untuk debugging jika terjadi kesalahan
                 }
             });
-            // Event listener untuk tombol "Edit"
-            $('#editForm').on('click', function() {
-                // Ubah semua input yang tadinya readonly menjadi required kembali (editable)
-                $('#lihat_keluhan').removeAttr('readonly').attr('required', true);
-                $('#lihat_keadaan_umum').removeAttr('readonly').attr('required', true);
-                $('#lihat_berat_badan').removeAttr('readonly').attr('required', true);
-                $('#lihat_suhu_badan').removeAttr('readonly').attr('required', true);
-                $('#lihat_tekanan_darah').removeAttr('readonly').attr('required', true);
-                $('#lihat_nadi').removeAttr('readonly').attr('required', true);
-                $('#rencana').removeAttr('readonly').attr('required', true);
-                $('#riwayat').removeAttr('readonly').attr('required', true);
-                $('#lihat_diagnosa_utama').removeAttr('readonly').attr('required', true);
-
-                // Opsional: Sembunyikan tombol edit jika hanya ingin tombol terlihat satu kali
-                // $(this).hide();
-            });
         });
+    });
+    // Event listener untuk tombol "Edit"
+    $('#editForm').on('click', function() {
+    // Ubah semua input yang tadinya readonly menjadi required kembali (editable)
+    $('#lihat_keluhan').removeAttr('readonly').attr('required', true);
+    $('#lihat_keadaan_umum').removeAttr('readonly').attr('required', true);
+    $('#lihat_berat_badan').removeAttr('readonly').attr('required', true);
+    $('#lihat_suhu_badan').removeAttr('readonly').attr('required', true);
+    $('#lihat_tekanan_darah').removeAttr('readonly').attr('required', true);
+    $('#lihat_nadi').removeAttr('readonly').attr('required', true);
+    $('#rencana').removeAttr('readonly').attr('required', true);
+    $('#riwayat').removeAttr('readonly').attr('required', true);
+    $('#lihat_diagnosa_utama').removeAttr('readonly').attr('required', true);
 
-        // Inisialisasi Select2
-        $('#pasien-select').select2({
-            placeholder: "-- Cari Pasien --",
-            allowClear: true,
-            language: {
-                noResults: function() {
-                    return "Pasien tidak ditemukan";
-                }
+    // Opsional: Sembunyikan tombol edit jika hanya ingin tombol terlihat satu kali
+    // $(this).hide();
+    });
+    });
+
+    // Inisialisasi Select2
+    $('#pasien-select').select2({
+        placeholder: "-- Cari Pasien --",
+        allowClear: true,
+        language: {
+            noResults: function() {
+                return "Pasien tidak ditemukan";
             }
-        });
-        // Event listener untuk saat pilihan dihapus (tombol x ditekan)
-        $('#pasien-select').on('select2:clear', function(e) {
-            // Bersihkan semua kolom input yang terkait
-            $('#id_pasien').val('');
-            $('#nama_pasien').val('');
-            $('#jenis_kelamin').val('');
-            $('#tempat_lahir').val('');
-            $('#no_rm').val('');
-            $('#no_telepon_pasien').val('');
-            $('#alamat_pasien').val('');
-            $('#tanggal_lahir').val('');
-            $('#umur').val('');
-
-            $('#data-tabel tbody').empty();
-
-            let baseUrl = "{{ route('rekam') }}";
-            window.history.replaceState(null, null, baseUrl); // Ubah URL tanpa reload halaman
-
-            $('.pagination-container').remove(); // Hilangkan hanya pagination
-            // Sembunyikan kembali kolom tanggal dan tombol cetak
-            $('#tanggal_periode').attr('hidden', true);
-            $('#btn-cetak').attr('hidden', true);
-        });
-        // Event listener untuk mencegah submit saat Select2 clear
-        $('#form-pencarian').on('submit', function(e) {
-            if ($('#pasien-select').val() === "") {
-                e.preventDefault(); // Mencegah form dikirim jika tidak ada pilihan
-            }
-        });
-        // Event listener untuk mengirim form secara otomatis saat memilih pasien
-        $('#pasien-select').on('change', function() {
-            $('#form-pencarian').submit();
-        });
-        // Menampilkan kolom tanggal dan tombol cetak setelah data pencarian muncul
-        if ($('#data-tabel tbody tr').length > 0) {
-            $('#tanggal_periode').removeAttr('hidden');
-            $('#btn-cetak').removeAttr('hidden');
         }
+    });
+    // Event listener untuk saat pilihan dihapus (tombol x ditekan)
+    $('#pasien-select').on('select2:clear', function(e) {
+        // Bersihkan semua kolom input yang terkait
+        $('#id_pasien').val('');
+        $('#nama_pasien').val('');
+        $('#jenis_kelamin').val('');
+        $('#tempat_lahir').val('');
+        $('#no_rm').val('');
+        $('#no_telepon_pasien').val('');
+        $('#alamat_pasien').val('');
+        $('#tanggal_lahir').val('');
+        $('#umur').val('');
 
-        flatpickr("#tanggal_periode", {
-            dateFormat: "Y-m-d",
-            mode: "range",
-            locale: "id",
-            allowInput: true
-        });
+        $('#data-tabel tbody').empty();
 
-        // Event listener untuk tombol cetak
-        $('#btn-cetak').on('click', function(e) {
-            var tanggalPeriode = $('#tanggal_periode').val();
-            if (tanggalPeriode === "") {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Perhatian',
-                    text: 'Silakan pilih tanggal periode terlebih dahulu.',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#AD0B00'
-                });
-            } else {
-                // Logika untuk mencetak PDF dengan tanggal periode
-                console.log("Mencetak untuk tanggal: " + tanggalPeriode);
-            }
-        });
+        let baseUrl = "{{ route('rekam') }}";
+        window.history.replaceState(null, null, baseUrl); // Ubah URL tanpa reload halaman
 
-        $('.btn-cari').on('click', function(e) {
-            var selectedValue = $('#pasien-select').val();
-            if (selectedValue === "") {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Perhatian',
-                    text: 'Silahkan pilih pasien terlebih dahulu.',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#AD0B00'
-                });
-            }
-        });
+        $('.pagination-container').remove(); // Hilangkan hanya pagination
+        // Sembunyikan kembali kolom tanggal dan tombol cetak
+        $('#tanggal_periode').attr('hidden', true);
+        $('#btn-cetak').attr('hidden', true);
+    });
+    // Event listener untuk mencegah submit saat Select2 clear
+    $('#form-pencarian').on('submit', function(e) {
+        if ($('#pasien-select').val() === "") {
+            e.preventDefault(); // Mencegah form dikirim jika tidak ada pilihan
+        }
+    });
+    // Event listener untuk mengirim form secara otomatis saat memilih pasien
+    $('#pasien-select').on('change', function() {
+        $('#form-pencarian').submit();
+    });
+    // Menampilkan kolom tanggal dan tombol cetak setelah data pencarian muncul
+    if ($('#data-tabel tbody tr').length > 0) {
+        $('#tanggal_periode').removeAttr('hidden');
+        $('#btn-cetak').removeAttr('hidden');
+    }
 
-        // Inisialisasi Notyf
-        let notyf = new Notyf({
-            duration: 2500, // Durasi notifikasi
-            position: {
-                x: 'right', // posisi X (left/right)
-                y: 'top', // posisi Y (top/bottom)
-            }
-        });
+    flatpickr("#tanggal_periode", {
+        dateFormat: "Y-m-d",
+        mode: "range",
+        locale: "id",
+        allowInput: true
+    });
 
-        // Menampilkan notifikasi berdasarkan session Laravel
-        @if (session('success'))
-            notyf.success('{{ session('success') }}');
-        @elseif (session('error'))
-            notyf.error('{{ session('error') }}');
-        @elseif (session('info'))
-            notyf.open({
-                type: 'info',
-                message: '{{ session('info') }}'
+    // Event listener untuk tombol cetak
+    $('#btn-cetak').on('click', function(e) {
+        var tanggalPeriode = $('#tanggal_periode').val();
+        if (tanggalPeriode === "") {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Perhatian',
+                text: 'Silakan pilih tanggal periode terlebih dahulu.',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#AD0B00'
             });
-        @elseif (session('warning'))
-            notyf.open({
-                type: 'warning',
-                message: '{{ session('warning') }}'
+        } else {
+            // Logika untuk mencetak PDF dengan tanggal periode
+            console.log("Mencetak untuk tanggal: " + tanggalPeriode);
+        }
+    });
+
+    $('.btn-cari').on('click', function(e) {
+        var selectedValue = $('#pasien-select').val();
+        if (selectedValue === "") {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Perhatian',
+                text: 'Silahkan pilih pasien terlebih dahulu.',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#AD0B00'
             });
-        @endif
+        }
+    });
+
+    // Inisialisasi Notyf
+    let notyf = new Notyf({
+        duration: 2500, // Durasi notifikasi
+        position: {
+            x: 'right', // posisi X (left/right)
+            y: 'top', // posisi Y (top/bottom)
+        }
+    });
+
+    // Menampilkan notifikasi berdasarkan session Laravel
+    @if (session('success'))
+        notyf.success('{{ session('success') }}');
+    @elseif (session('error'))
+        notyf.error('{{ session('error') }}');
+    @elseif (session('info'))
+        notyf.open({
+            type: 'info',
+            message: '{{ session('info') }}'
+        });
+    @elseif (session('warning'))
+        notyf.open({
+            type: 'warning',
+            message: '{{ session('warning') }}'
+        });
+    @endif
     });
 </script>

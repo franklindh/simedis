@@ -96,7 +96,10 @@ Route::group(['middleware' => ['petugas:*']], function () {
 Route::group(['middleware' => ['petugas:Poliklinik,Dokter']], function () {
     Route::get('/pemeriksaan', [PemeriksaanController::class, 'index'])->name('pemeriksaan');
     Route::post('/pemeriksaan', [PemeriksaanController::class, 'store'])->name('pemeriksaan.store');
-    Route::get('/pemeriksaan/{id_antrian}', [PemeriksaanController::class, 'detailById'])->name('pemeriksaan.detailById');
+    Route::get('/pemeriksaan/{id_antrian}', [PemeriksaanController::class, 'show'])->name('pemeriksaan.show');
+
+    Route::get('/icd-list', [PemeriksaanController::class, 'getIcdList'])->name('icd.list');
+
 });
 
 

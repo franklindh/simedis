@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Administrasi;
 
 use App\Http\Controllers\Controller;
+use App\Models\Antrian;
 use Illuminate\Http\Request;
 use App\Models\Pemeriksaan;
 use Illuminate\Support\Facades\DB;
@@ -124,16 +125,15 @@ class RekamController extends Controller
         $dataRekamMedisDetail = DB::table('pemeriksaan')
             ->join('antrian', 'pemeriksaan.id_antrian', 'antrian.id_antrian')
             ->join('pasien', 'antrian.id_pasien', 'pasien.id_pasien')
-            ->join('jadwal', 'antrian.id_jadwal', 'antrian.id_jadwal')
+            ->join('jadwal', 'antrian.id_jadwal', 'jadwal.id_jadwal')
             ->join('poli', 'jadwal.id_poli', 'poli.id_poli')
-            ->join('petugas', 'jadwal.id_petugas', 'jadwal.id_petugas')
+            ->join('petugas', 'jadwal.id_petugas', 'petugas.id_petugas')
             ->select('pemeriksaan.*', 'antrian.*', 'pasien.*', 'jadwal.*', 'poli.*', 'petugas.*')
             ->where('pasien.id_pasien', $id_pasien)
             ->where('pemeriksaan.tanggal_pemeriksaan', $tanggal)
             ->first();
 
         $icd = ICD::find($dataRekamMedisDetail->id_icd);
-
         if ($dataRekamMedisDetail == null) {
             return redirect()->back()->with('error', 'Data diagnosis tidak ditemukan');
         }
@@ -219,15 +219,9 @@ class RekamController extends Controller
 
         $umur = Carbon::parse($dataRekamMedisDetail->tanggal_lahir_pasien)->age;
 
-        $diagnosis = DB::table('diagnosis')
-            ->join('icd', 'diagnosis.id_icd', 'icd.id_icd')
-            ->select('diagnosis.*', 'icd.*')
-            ->where('diagnosis.id_pemeriksaan', $id)
-            ->get();
-
         $pdf = PDF::loadView('petugas.administrator.pdf.resume-medis', compact('dataRekamMedisDetail', 'umur', 'jk'));
 
-        // return $pdf->download("resume-medis-{$dataRekamMedisDetail->nama_pasien}.pdf");
+        return $pdf->download("resume-medis-{$dataRekamMedisDetail->nama_pasien}.pdf");
         // return view('petugas.administrator.pdf.resume-medis', compact('dataRekamMedisDetail', 'umur', 'jk', 'diagnosis'));
     }
 }

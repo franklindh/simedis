@@ -6,107 +6,105 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Resume Medis</title>
         <style>
+            /* Mengatur halaman PDF menjadi landscape */
+            @page {
+                size: A4 landscape;
+                margin: 10mm;
+            }
+
             body {
                 font-family: Arial, sans-serif;
-                height: 100vh;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background-color: #f4f4f4;
                 margin: 0;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                /* background-color: #f4f4f4; */
             }
 
             .container {
-                background-color: white;
+                width: 95%;
+                max-width: 1000px;
+                height: auto;
                 padding: 20px;
-                border: 1px solid black;
-                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-                width: 80%;
-                max-width: 800px;
                 box-sizing: border-box;
-                overflow-y: auto;
+                background-color: white;
+                border: 1px solid black;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                /* box-shadow: none; */
+                /* Pastikan tidak ada bayangan di sini */
             }
 
             .header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
                 text-align: center;
+                border-bottom: 2px solid black;
                 padding-bottom: 10px;
-                position: relative;
+                margin-bottom: 10px;
             }
 
-            .header img.logo-left {
-                width: 80px;
-                position: absolute;
-                left: 0;
-                top: 0;
-            }
-
-            .header img.logo-right {
-                width: 80px;
-                position: absolute;
-                right: 0;
-                top: 0;
+            .header img {
+                width: 70px;
             }
 
             .header h1 {
+                font-size: 16px;
                 margin: 0;
-                font-size: 20px;
             }
 
             .header h2 {
+                font-size: 14px;
                 margin: 0;
-                font-size: 18px;
                 font-weight: bold;
             }
 
             .header p {
-                margin-top: 5px;
-                font-size: 12px;
-            }
-
-            .header hr {
-                border: none;
-                border-top: 2px solid black;
-                margin: 40px 0 10px 0;
-            }
-
-            .tes {
-                margin-top: 5px;
-                padding: 10px;
-                line-height: 1.4;
-                /* border: 1px solid black; */
+                font-size: 10px;
+                margin: 0;
             }
 
             h3 {
-                font-size: 24px;
                 text-align: center;
-                margin-top: 20px;
+                font-size: 16px;
+                margin: 5px 0 10px 0;
+            }
+
+            .info-section,
+            .section {
+                margin-top: 10px;
+                font-size: 12px;
             }
 
             .table-info {
                 width: 100%;
                 border-collapse: collapse;
-                margin-top: 10px;
+                margin-top: 5px;
             }
 
-            .table-info td,
-            .table-info th {
-                font-weight: normal;
-                border: 1px solid black;
-                padding: 12px;
-                font-size: 14px;
-            }
-
-            .table-info th {
+            .table-info th,
+            .table-info td {
+                padding: 4px;
+                font-size: 11px;
                 text-align: left;
+                border: 1px solid black;
+                vertical-align: top;
             }
 
             .section-title {
                 font-weight: bold;
-                margin-bottom: 10px;
+                margin-top: 15px;
+                font-size: 14px;
             }
 
-            .section {
+            .content {
                 margin-top: 5px;
+                font-size: 12px;
+                line-height: 1.5;
             }
         </style>
     </head>
@@ -114,51 +112,51 @@
     <body>
         <div class="container">
             <div class="header">
-                <img src="{{ asset('images/logo/kabupaten.png') }}" alt="Logo 1" class="logo-left">
-                <img src="{{ asset('images/logo/puskesmas.png') }}" alt="Logo 2" class="logo-right">
-                <h1 style="font-weight: normal;">PEMERINTAH KABUPATEN BIAK KOTA</h1>
-                <h2>PUSKESMAS BIAK KOTA</h2>
-                <p>Alamat : Jl. Jend. Sudirman Biak-Papua Kode Pos 98115 Email :pkmbiakkota581@gmail.com</p>
-                <hr>
+                <img src="{{ asset('images/logo/kabupaten.png') }}" alt="Logo 1">
+                <div>
+                    <h1>PEMERINTAH KABUPATEN BIAK KOTA</h1>
+                    <h2>PUSKESMAS BIAK KOTA</h2>
+                    <p>Alamat: Jl. Jend. Sudirman Biak-Papua Kode Pos 98115, Email: pkmbiakkota581@gmail.com</p>
+                </div>
+                <img src="{{ asset('images/logo/puskesmas.png') }}" alt="Logo 2">
             </div>
+
+            <h3>HASIL PEMERIKSAAN</h3>
 
             <table class="table-info">
                 <tr>
-                    <th colspan="6">
-                        <h1>HASIL PEMERIKSAAN</h1>
-                    </th>
-                    <th colspan="2"><b>Nomor Rekam Medis :</b> {{ $dataRekamMedisDetail->no_rekam_medis }}</th>
+                    <th colspan="3">Nomor Rekam Medis: {{ $dataRekamMedisDetail->no_rekam_medis }}</th>
                 </tr>
                 <tr>
-                    <th><b>Nama Pasien :</b> {{ $dataRekamMedisDetail->nama_pasien }}</th>
-                    <th colspan="4"><b>Tanggal Lahir :</b> {{ $dataRekamMedisDetail->tanggal_lahir_pasien }}</th>
-                    <th><b>Umur :</b> {{ $umur }}</th>
-                    <th colspan="2"><b>Jenis Kelamin :</b> {{ $jk }}</th>
+                    <td>Nama Pasien: {{ $dataRekamMedisDetail->nama_pasien }}</td>
+                    <td>Tanggal Lahir: {{ $dataRekamMedisDetail->tanggal_lahir_pasien }}</td>
+                    <td>Umur: {{ $umur }} Tahun</td>
                 </tr>
                 <tr>
-                    <th><b>Tanggal Pemeriksaan :</b> {{ $dataRekamMedisDetail->tanggal_pemeriksaan }}
-                    </th>
+                    <td colspan="2">Jenis Kelamin: {{ $jk }}</td>
+                    <td>Tanggal Pemeriksaan: {{ $dataRekamMedisDetail->tanggal_pemeriksaan }}</td>
                 </tr>
             </table>
-            <div class="tes">
-                <div class="section-title"><b>I. ANAMNESA</b></div>
-                <div class="section">Keluhan : {{ $dataRekamMedisDetail->keluhan }}</div>
-                <div class="section">Riwayat Penyakit : {{ $dataRekamMedisDetail->riwayat_penyakit }}</div>
-                <div class="section">Keterangan : {{ $dataRekamMedisDetail->keterangan }}</div>
+
+            <div class="info-section">
+                <div class="section-title">I. ANAMNESA</div>
+                <p>Keluhan: {{ $dataRekamMedisDetail->keluhan }}</p>
+                <p>Riwayat Penyakit: {{ $dataRekamMedisDetail->riwayat_penyakit }}</p>
+                <p>Keterangan: {{ $dataRekamMedisDetail->keterangan }}</p>
             </div>
-            <div class="tes">
-                <div class="section-title"><b>II. PEMERIKSAAN FISIK</b></div>
-                <div class="section">Keadaan Umum : {{ $dataRekamMedisDetail->keadaan_umum }}</div>
-                <div class="section">Tekanan Darah : {{ $dataRekamMedisDetail->tekanan_darah }} mmHg</div>
-                <div class="section">Suhu : {{ $dataRekamMedisDetail->suhu }}°C</div>
-                <div class="section">Nadi : {{ $dataRekamMedisDetail->nadi }} x/mnt</div>
-                <div class="section">Berat Badan : {{ $dataRekamMedisDetail->berat_badan }}</div>
+
+            <div class="info-section">
+                <div class="section-title">II. PEMERIKSAAN FISIK</div>
+                <p>Keadaan Umum: {{ $dataRekamMedisDetail->keadaan_umum }}</p>
+                <p>Tekanan Darah: {{ $dataRekamMedisDetail->tekanan_darah }} mmHg</p>
+                <p>Suhu: {{ $dataRekamMedisDetail->suhu }}°C</p>
+                <p>Nadi: {{ $dataRekamMedisDetail->nadi }} x/mnt</p>
+                <p>Berat Badan: {{ $dataRekamMedisDetail->berat_badan }} kg</p>
             </div>
-            <div class="tes">
-                <div class="section-title"><b>III. DIAGNOSIS</b></div>
-                <div class="section">Diagnosis : {{ $diagnosis->nama_penyakit }}</div>
-                {{-- <div class="section">Tindakan : {{ $dataRekamMedisDetail->tindakan }}</div>
-                <div class="section">Obat : {{ $dataRekamMedisDetail->obat }}</div> --}}
+
+            <div class="info-section">
+                <div class="section-title">III. DIAGNOSIS</div>
+                <p>Diagnosis: {{ $dataRekamMedisDetail->nama_penyakit }}</p>
             </div>
         </div>
     </body>

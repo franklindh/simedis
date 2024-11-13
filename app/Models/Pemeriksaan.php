@@ -27,4 +27,9 @@ class Pemeriksaan extends Model
         'tindakan',
         'tanggal_pemeriksaan',
     ];
+
+    public function icd()
+    {
+        return $this->belongsTo(Icd::class, 'id_icd', 'id_icd');
+    }
 }

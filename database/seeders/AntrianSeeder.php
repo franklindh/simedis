@@ -78,7 +78,8 @@ class AntrianSeeder extends Seeder
             // Insert ke tabel antrian
             Antrian::create([
                 'nomor_antrian' => $nomorAntrian,
-                'status' => $faker->randomElement(['Menunggu', 'Menunggu Diagnosis', 'Selesai']),
+                // 'status' => $faker->randomElement(['Menunggu', 'Menunggu Diagnosis', 'Selesai']),
+                'status' => 'Menunggu',
                 'prioritas' => $faker->randomElement(['Gawat', 'Non Gawat']),
                 'id_pasien' => $pasienId[$i],
                 'id_jadwal' => $jadwalId[$i],
