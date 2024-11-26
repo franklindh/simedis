@@ -37,7 +37,6 @@ class RekamController extends Controller
         // } else {
         //     $jenisKelamin = 'Perempuan';
         // }
-
         $pasiens = DB::table('pasien')->get();
 
         return view('petugas.administrator.rekam', compact('pasiens'));
@@ -46,17 +45,6 @@ class RekamController extends Controller
     public function cari(Request $request)
     {
         $idPasien = $request->id_pasien;
-        // dd($idPasien);
-        // $pasienDetail = DB::table('pemeriksaan')
-        //     ->join('antrian', 'pemeriksaan.id_antrian', 'antrian.id_antrian')
-        //     ->join('pasien', 'antrian.id_pasien', 'pasien.id_pasien')
-        //     ->join('jadwal', 'antrian.id_jadwal', 'antrian.id_jadwal')
-        //     ->join('poli', 'jadwal.id_poli', 'poli.id_poli')
-        //     ->join('petugas', 'jadwal.id_petugas', 'jadwal.id_petugas')
-        //     ->select('pemeriksaan.*', 'antrian.*', 'pasien.*', 'jadwal.*', 'poli.*', 'petugas.*')
-        //     ->where('antrian.id_pasien', $idPasien)
-        //     ->orderBy('pemeriksaan.tanggal_pemeriksaan', 'desc')
-        //     ->paginate(5);
 
         $pasienDetail = DB::table('antrian')
             ->join('pemeriksaan', 'antrian.id_antrian', 'pemeriksaan.id_antrian')
@@ -77,18 +65,13 @@ class RekamController extends Controller
             $tanggalPemeriksaan = $pasienDetail[0]->tanggal_pemeriksaan;
             Carbon::setLocale('id');
             $tanggal = Carbon::parse($tanggalPemeriksaan)->translatedFormat('l, d F Y');
-            // $tanggal = Carbon::parse($tanggalPemeriksaan)->translatedFormat('l, d F Y');
-            // dd($tanggal);
+
             $tanggalLahir = $pasienDetail[0]->tanggal_lahir_pasien;
             Carbon::setLocale('id');
             $tanggalLahir = Carbon::parse($tanggalLahir)->translatedFormat('d F Y');
 
             $jenisKelamin = $pasienDetail[0]->jk_pasien;
-            if ($jenisKelamin == 'L') {
-                $jenisKelamin = 'Laki-laki';
-            } else {
-                $jenisKelamin = 'Perempuan';
-            }
+            $jenisKelamin = ($jenisKelamin == 'L') ? 'Laki-laki' : 'Perempuan';
 
             $umur = Carbon::parse($pasienDetail[0]->tanggal_lahir_pasien)->age;
 
@@ -219,7 +202,16 @@ class RekamController extends Controller
 
         $umur = Carbon::parse($dataRekamMedisDetail->tanggal_lahir_pasien)->age;
 
-        $pdf = PDF::loadView('petugas.administrator.pdf.resume-medis', compact('dataRekamMedisDetail', 'umur', 'jk'));
+        $tanggalPemeriksaan = $dataRekamMedisDetail->tanggal_pemeriksaan;
+        Carbon::setLocale('id');
+        $tanggal = Carbon::parse($tanggalPemeriksaan)->translatedFormat('l, d F Y');
+        // $tanggal = Carbon::parse($tanggalPemeriksaan)->translatedFormat('l, d F Y');
+        // dd($tanggal);
+        $tanggalLahir = $dataRekamMedisDetail->tanggal_lahir_pasien;
+        Carbon::setLocale('id');
+        $tanggalLahir = Carbon::parse($tanggalLahir)->translatedFormat('d F Y');
+
+        $pdf = PDF::loadView('petugas.administrator.pdf.resume-medis', compact('dataRekamMedisDetail', 'umur', 'jk', 'tanggal', 'tanggalLahir'));
 
         return $pdf->download("resume-medis-{$dataRekamMedisDetail->nama_pasien}.pdf");
         // return view('petugas.administrator.pdf.resume-medis', compact('dataRekamMedisDetail', 'umur', 'jk', 'diagnosis'));

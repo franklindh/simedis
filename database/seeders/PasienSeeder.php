@@ -32,11 +32,11 @@ class PasienSeeder extends Seeder
         // ]);
         $faker = Faker::create('id_ID');
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             Pasien::create([
                 'id_pasien' => Str::uuid(),
                 'nik' => $this->generateBigInt(16),
-                'no_rekam_medis' => $faker->numberBetween(1000, 9999),
+                'no_rekam_medis' => $faker->numberBetween(100000, 999999),
                 'no_kartu_jaminan' => $faker->numberBetween(1000, 9999),
                 'username_pasien' => $faker->userName,
                 'no_telepon_pasien' => $faker->phoneNumber,

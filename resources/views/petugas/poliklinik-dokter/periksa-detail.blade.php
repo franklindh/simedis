@@ -10,7 +10,7 @@
         <button onclick="window.history.back()" class="btn btn-secondary">Kembali</button>
         <div class="card mt-2">
             <div class="card-body p-3"> <!-- Mengurangi padding card -->
-                <form action="{{ route('pemeriksaan.store') }}" method="POST">
+                <form action="{{ route('pemeriksaan.store') }}" id="form-pemeriksaan" method="POST">
                     @csrf
                     <input type="hidden" name="idAntrian" value="{{ $idAntrian ?? '' }}">
                     <div class="card mt-2">
@@ -37,7 +37,6 @@
                                                 value="{{ old('keluhan', $pemeriksaan->keluhan ?? '') }}"
                                                 {{ isset($pemeriksaan) ? 'readonly' : '' }}> --}}
                                             <textarea name="keluhan" cols="30" rows="5" class="form-control" {{ isset($pemeriksaan) ? 'readonly' : '' }}>{{ old('keluhan', $pemeriksaan->keluhan ?? '') }}</textarea>
-
                                             @error('keluhan')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -150,18 +149,30 @@
                                                     <!-- Dokter dapat memilih ICD -->
                                                     {{-- <select id="icd" name="icd"
                                                         class="form-control"></select> --}}
-                                                    <select id="icd" name="icd" class="form-control">
+                                                    {{-- <select id="icd" name="icd" class="form-control">
                                                         @if ($pemeriksaan && $pemeriksaan->icd)
-                                                            <option value="{{ $pemeriksaan->icd->id_icd }}" selected>
-                                                                {{ $pemeriksaan->icd->kode_icd }} -
-                                                                {{ $pemeriksaan->icd->nama_penyakit }}
-                                                            </option>
+                                                            @foreach ($kodeIcd as $kI)
+                                                                <option value="{{ $kI->id_icd }}"
+                                                                    {{ $kI->kode_icd == $kI->id_icd ? 'selected' : '' }}>
+                                                                    {{ $kI->kode_icd . ' ' . $kI->nama_penyakit }}
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select> --}}
+                                                    <select id="icd" name="icd" class="form-control">
+                                                        @if ($pemeriksaan && $pemeriksaan->id_icd)
+                                                            @foreach ($kodeIcd as $kI)
+                                                                <option value="{{ $kI->id_icd }}"
+                                                                    {{ $pemeriksaan->id_icd == $kI->id_icd ? 'selected' : '' }}>
+                                                                    {{ $kI->kode_icd . ' - ' . $kI->nama_penyakit }}
+                                                                </option>
+                                                            @endforeach
                                                         @endif
                                                     </select>
                                                 @else
                                                     <!-- Petugas Poliklinik hanya dapat melihat ICD yang sudah ada -->
                                                     <p class="form-control-plaintext">
-                                                        {{ $pemeriksaan->icd ? $pemeriksaan->icd->kode_icd . ' ' . $pemeriksaan->icd->nama_penyakit : 'ICD tidak tersedia' }}
+                                                        {{-- {{ $kodeIcd->kode_icd ? $kodeIcd->kode_icd . ' ' . $kodeIcd->nama_penyakit : 'ICD tidak tersedia' }} --}}
                                                     </p>
                                                 @endif
                                             </div>
@@ -186,7 +197,7 @@
                                                 @if (Auth::guard('petugas')->user()->role === 'Dokter')
                                                     <!-- Dokter dapat mengisi tindakan -->
                                                     <textarea name="tindakan" cols="30" rows="5" class="form-control"
-                                                        {{ isset($pemeriksaan) ? 'readonly' : '' }}>{{ old('tindakan', $pemeriksaan->tindakan ?? '') }}</textarea>
+                                                        {{ isset($pemeriksaan->tindakan) ? 'readonly' : '' }}>{{ old('tindakan', $pemeriksaan->tindakan ?? '') }}</textarea>
                                                 @else
                                                     <!-- Petugas Poliklinik hanya dapat melihat tindakan yang sudah ada -->
                                                     <p class="form-control-plaintext">
@@ -218,8 +229,10 @@
 
                                 {{-- @if (!isset($pemeriksaan)) --}}
                                 <div class="mt-3">
-                                    <button type="submit" class="btn btn-primary btn-sm">Simpan
+                                    <button type="submit" id="save-button" class="btn btn-primary btn-sm">Simpan
                                         Pemeriksaan</button>
+                                    <button type="button" id="edit-button"
+                                        class="btn btn-primary btn-sm">Edit</button>
                                 </div>
                                 {{-- @endif --}}
                             </div>
@@ -270,25 +283,119 @@
     //         }
     //     @endif
     // });
+
+    // $(document).ready(function() {
+    //     $('#icd').select2({
+    //         placeholder: 'Pilih ICD',
+    //         ajax: {
+    //             url: '{{ route('icd.list') }}', // Endpoint untuk mengambil data ICD
+    //             dataType: 'json',
+    //             delay: 250,
+    //             data: function(params) {
+    //                 return {
+    //                     search: params.term // Kata kunci pencarian
+    //                 };
+    //             },
+    //             processResults: function(data) {
+    //                 return {
+    //                     results: data
+    //                 };
+    //             },
+    //             cache: true
+    //         }
+    //     });
+    // });
+
     $(document).ready(function() {
+        let isEditable = false;
+
+        // Tombol Edit untuk mengaktifkan semua input dan textarea
+        $('#edit-button').click(function() {
+            let inputs = $('form input, form textarea'); // Pilih semua input dan textarea di form
+            if (!isEditable) {
+                inputs.removeAttr('readonly'); // Hapus readonly
+                $(this).text('Batal'); // Ubah teks tombol menjadi "Batal"
+                isEditable = true;
+                inputs.first().focus(); // Fokus pada input pertama
+            } else {
+                inputs.attr('readonly', true); // Tambahkan kembali readonly
+                $(this).text('Edit'); // Ubah teks tombol menjadi "Edit"
+                isEditable = false;
+            }
+        });
+
+        // Tombol Simpan Pemeriksaan
+        $('#save-button').click(function(event) {
+            event.preventDefault(); // Mencegah submit form secara default
+
+            // Pastikan input tidak readonly saat menyimpan
+            if (isEditable) {
+                $('form input, form textarea').removeAttr('readonly');
+            }
+
+            // Kirimkan form ke server
+            $('#form-pemeriksaan').submit();
+        });
         $('#icd').select2({
             placeholder: 'Pilih ICD',
             ajax: {
-                url: '{{ route('icd.list') }}', // Endpoint untuk mengambil data ICD
+                url: '{{ route('icd.list') }}',
                 dataType: 'json',
                 delay: 250,
                 data: function(params) {
                     return {
-                        search: params.term // Kata kunci pencarian
+                        search: params.term, // Kata kunci pencarian
+                        page: params.page || 1 // Halaman pagination
                     };
                 },
-                processResults: function(data) {
+                processResults: function(data, params) {
+                    params.page = params.page || 1;
+
                     return {
-                        results: data
+                        results: data.results,
+                        pagination: {
+                            more: data.pagination.more
+                        }
                     };
                 },
                 cache: true
             }
         });
+
+        // $('#icd').select2({
+        //     placeholder: 'Pilih ICD',
+        //     ajax: {
+        //         url: '{{ route('icd.list') }}',
+        //         dataType: 'json',
+        //         delay: 250,
+        //         data: function(params) {
+        //             return {
+        //                 search: params.term // Kata kunci pencarian
+        //             };
+        //         },
+        //         processResults: function(data) {
+        //             return {
+        //                 results: data
+        //             };
+        //         },
+        //         cache: true
+        //     }
+        // });
+
+        // Muat data awal jika ICD sudah ada
+        var existingIcd = "{{ old('icd', $pemeriksaan->icd ?? '') }}";
+        if (existingIcd) {
+            $.ajax({
+                url: '{{ route('icd.list') }}',
+                data: {
+                    id: existingIcd
+                },
+                dataType: 'json',
+                success: function(data) {
+                    var option = new Option(data.text, data.id, true, true);
+                    $('#icd').append(option).trigger('change');
+                }
+            });
+        }
     });
 </script>

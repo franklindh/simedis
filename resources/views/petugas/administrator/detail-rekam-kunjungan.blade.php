@@ -57,6 +57,14 @@
                                 @endforeach
                             </ul>
                             <div class="row-info">
+                                <span>Riwayat</span><span>:</span>
+                            </div>
+                            <ul>
+                                @foreach (explode(',', $dataRekamMedisDetail->riwayat_penyakit) as $riwayat)
+                                    <li>{{ trim($riwayat) }}</li>
+                                @endforeach
+                            </ul>
+                            <div class="row-info">
                                 <span>Keadaan
                                     Umum</span><span>:</span><span>{{ $dataRekamMedisDetail->keadaan_umum }}</span>
                             </div>

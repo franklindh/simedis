@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,7 @@ class JadwalSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
+        // Ambil data dokter dan poli dari database
         $dokter = DB::table('petugas')
             ->where('role', 'Dokter')
             ->pluck('id_petugas');
@@ -26,15 +28,22 @@ class JadwalSeeder extends Seeder
         $poli = DB::table('poli')
             ->pluck('id_poli');
 
-        for ($i = 0; $i < 3; $i++) {
-            Jadwal::create([
-                'tanggal_praktik' => now(),
-                'waktu_mulai' => '08:00:00',
-                'waktu_selesai' => '12:00:00',
-                'keterangan' => 'Jadwal praktek pagi',
-                'id_petugas' => $dokter[$i],
-                'id_poli' => $poli[0],
-            ]);
+        // Tanggal awal dan akhir untuk jadwal
+        $startDate = Carbon::create(2024, 11, 25); // 23 November 2024
+        $endDate = Carbon::create(2024, 11, 30);   // 30 November 2024
+
+        while ($startDate->lte($endDate)) {
+            foreach ($dokter as $dokterId) {
+                Jadwal::create([
+                    'tanggal_praktik' => $startDate->format('Y-m-d'),
+                    'waktu_mulai' => '07:00:00',
+                    'waktu_selesai' => '12:00:00',
+                    'keterangan' => 'Jadwal praktek pagi',
+                    'id_petugas' => $dokterId,
+                    'id_poli' => $poli->random(), // Pilih poli secara acak
+                ]);
+            }
+            $startDate->addDay(); // Tambahkan 1 hari
         }
     }
 }

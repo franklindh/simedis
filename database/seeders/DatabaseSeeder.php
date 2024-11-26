@@ -20,9 +20,9 @@ class DatabaseSeeder extends Seeder
                 // PasienSeeder::class,
                 // PoliSeeder::class,
                 // ICDSeeder::class,
-            JadwalSeeder::class,
+                // JadwalSeeder::class,
             AntrianSeeder::class,
-            // PemeriksaanSeeder::class,
+            PemeriksaanSeeder::class,
         ]);
     }
 }

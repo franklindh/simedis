@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Poliklinik;
 
+use App\Models\Antrian;
+use App\Models\ICD;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +18,7 @@ class PemeriksaanController extends Controller
             ->join('pasien', 'antrian.id_pasien', 'pasien.id_pasien')
             ->join('jadwal', 'antrian.id_jadwal', 'jadwal.id_jadwal')
             ->join('poli', 'jadwal.id_poli', 'poli.id_poli')
-            ->select('antrian.*', 'pasien.nama_pasien', 'pasien.no_rekam_medis', 'jadwal.*', 'poli.*')
+            ->select('antrian.*', 'pasien.nama_pasien', 'pasien.no_rekam_medis', 'jadwal.*', 'poli.*', 'antrian.status')
             ->whereDate('antrian.created_at', Carbon::today()) // Hanya data hari ini
             ->orderBy('nomor_antrian', 'asc')
             ->paginate(5);
@@ -33,11 +35,95 @@ class PemeriksaanController extends Controller
         return view('petugas.poliklinik-dokter.periksa', compact('pasienDetail', 'tanggal', 'idAntrian'));
     }
 
+    // public function store(Request $request)
+    // {
+
+    //     // Cek apakah sudah ada data pemeriksaan untuk id_antrian tersebut
+
+    //     $validatedData = $request->validate([
+    //         'keluhan' => 'required',
+    //         'riwayat' => 'required',
+    //         'keadaan_umum' => 'required',
+    //         'berat_badan' => 'required|numeric',
+    //         'suhu_badan' => 'required|numeric',
+    //         'tekanan_darah' => 'required',
+    //         'nadi' => 'required|numeric',
+    //         // 'tindakan' => 'required',
+    //     ], [
+    //         'keluhan.required' => 'Keluhan wajib diisi.',
+    //         'riwayat.required' => 'Riwayat penyakit wajib diisi.',
+    //         'keadaan_umum.required' => 'Keadaan umum wajib diisi.',
+    //         'berat_badan.required' => 'Berat badan wajib diisi.',
+    //         'berat_badan.numeric' => 'Berat badan harus berupa angka.',
+    //         'suhu_badan.required' => 'Suhu badan wajib diisi.',
+    //         'suhu_badan.numeric' => 'Suhu badan harus berupa angka.',
+    //         'tekanan_darah.required' => 'Tekanan darah wajib diisi.',
+    //         'nadi.required' => 'Nadi wajib diisi.',
+    //         'nadi.numeric' => 'Nadi harus berupa angka.',
+    //         'tindakan.required' => 'Tindakan wajib diisi.',
+    //     ]);
+    //     // dd($validatedData);
+    //     $existingPemeriksaan = DB::table('pemeriksaan')
+    //         ->where('id_antrian', $request->idAntrian)
+    //         ->first();
+
+    //     // dd($request->all());
+
+    //     if ($existingPemeriksaan) {
+    //         // Jika sudah ada data pemeriksaan, lakukan update
+    //         DB::table('pemeriksaan')
+    //             ->where('id_antrian', $request->idAntrian)
+    //             ->update([
+    //                 'id_icd' => $request->icd,
+    //                 'keluhan' => $validatedData['keluhan'],
+    //                 'riwayat_penyakit' => $validatedData['riwayat'],
+    //                 'keadaan_umum' => $validatedData['keadaan_umum'],
+    //                 'berat_badan' => $validatedData['berat_badan'],
+    //                 'suhu' => $validatedData['suhu_badan'],
+    //                 'tekanan_darah' => $validatedData['tekanan_darah'],
+    //                 'nadi' => $validatedData['nadi'],
+    //                 'tindakan' => $request->tindakan,
+    //                 'updated_at' => Carbon::now(),
+    //             ]);
+    //         // Update status di tabel antrian
+    //         DB::table('antrian')
+    //             ->where('id_antrian', $request->idAntrian)
+    //             ->update([
+    //                 'status' => 'Selesai',
+    //                 'updated_at' => Carbon::now(),
+    //             ]);
+    //     } else {
+    //         // Jika belum ada data pemeriksaan, lakukan insert
+    //         DB::table('pemeriksaan')->insert([
+    //             'id_antrian' => $request->idAntrian,
+    //             'id_icd' => $request->icd,
+    //             'keluhan' => $validatedData['keluhan'],
+    //             'riwayat_penyakit' => $validatedData['riwayat'],
+    //             'keadaan_umum' => $validatedData['keadaan_umum'],
+    //             'berat_badan' => $validatedData['berat_badan'],
+    //             'suhu' => $validatedData['suhu_badan'],
+    //             'tekanan_darah' => $validatedData['tekanan_darah'],
+    //             'nadi' => $validatedData['nadi'],
+    //             'tanggal_pemeriksaan' => Carbon::now(),
+    //             'created_at' => Carbon::now(),
+    //             'updated_at' => Carbon::now(),
+    //         ]);
+    //         // Update status di tabel antrian
+    //         DB::table('antrian')
+    //             ->where('id_antrian', $request->idAntrian)
+    //             ->update([
+    //                 'status' => 'Menunggu Diagnosis',
+    //                 'updated_at' => Carbon::now(),
+    //             ]);
+    //     }
+
+    //     // return redirect()->back()->with('success', 'Pemeriksaan pasien berhasil disimpan');
+    //     return redirect()->route('pemeriksaan')->with('success', 'Pemeriksaan pasien berhasil disimpan');
+    // }
     public function store(Request $request)
     {
-
-        // Cek apakah sudah ada data pemeriksaan untuk id_antrian tersebut
-
+        // dd($request->all());
+        // Validasi data
         $validatedData = $request->validate([
             'keluhan' => 'required',
             'riwayat' => 'required',
@@ -45,8 +131,7 @@ class PemeriksaanController extends Controller
             'berat_badan' => 'required|numeric',
             'suhu_badan' => 'required|numeric',
             'tekanan_darah' => 'required',
-            'nadi' => 'required|numeric',
-            // 'tindakan' => 'required',
+            'nadi' => 'required',
         ], [
             'keluhan.required' => 'Keluhan wajib diisi.',
             'riwayat.required' => 'Riwayat penyakit wajib diisi.',
@@ -58,41 +143,56 @@ class PemeriksaanController extends Controller
             'tekanan_darah.required' => 'Tekanan darah wajib diisi.',
             'nadi.required' => 'Nadi wajib diisi.',
             'nadi.numeric' => 'Nadi harus berupa angka.',
-            'tindakan.required' => 'Tindakan wajib diisi.',
         ]);
+
+        // Simpan atau perbarui data pemeriksaan menggunakan updateOrCreate
         // dd($validatedData);
-        $existingPemeriksaan = DB::table('pemeriksaan')
-            ->where('id_antrian', $request->idAntrian)
-            ->first();
+        // Pemeriksaan::updateOrCreate(
+        //     ['id_antrian' => $request->idAntrian], // Kondisi untuk update
+        //     [
+        //         'id_icd' => $request->icd,
+        //         'keluhan' => $validatedData['keluhan'],
+        //         'riwayat_penyakit' => $validatedData['riwayat'],
+        //         'keadaan_umum' => $validatedData['keadaan_umum'],
+        //         'berat_badan' => $validatedData['berat_badan'],
+        //         'suhu' => $validatedData['suhu_badan'],
+        //         'tekanan_darah' => $validatedData['tekanan_darah'],
+        //         'nadi' => $validatedData['nadi'],
+        //         'tindakan' => $request->tindakan ?? null,
+        //         'tanggal_pemeriksaan' => Carbon::now(),
+        //     ]
+        // );
 
-        // dd($request->all());
+        // // Perbarui status antrian
+        // $statusAntrian = Pemeriksaan::where('id_antrian', $request->idAntrian)->exists() ? 'Menunggu Diagnosis' : 'Selesai';
+        // Antrian::where('id_antrian', $request->idAntrian)->update([
+        //     'status' => $statusAntrian,
+        //     'updated_at' => Carbon::now(),
+        // ]);
 
-        if ($existingPemeriksaan) {
-            // Jika sudah ada data pemeriksaan, lakukan update
-            DB::table('pemeriksaan')
-                ->where('id_antrian', $request->idAntrian)
-                ->update([
-                    'id_icd' => $request->icd,
-                    'keluhan' => $validatedData['keluhan'],
-                    'riwayat_penyakit' => $validatedData['riwayat'],
-                    'keadaan_umum' => $validatedData['keadaan_umum'],
-                    'berat_badan' => $validatedData['berat_badan'],
-                    'suhu' => $validatedData['suhu_badan'],
-                    'tekanan_darah' => $validatedData['tekanan_darah'],
-                    'nadi' => $validatedData['nadi'],
-                    'tindakan' => $request->tindakan,
-                    'updated_at' => Carbon::now(),
-                ]);
-            // Update status di tabel antrian
-            DB::table('antrian')
-                ->where('id_antrian', $request->idAntrian)
-                ->update([
-                    'status' => 'Selesai',
-                    'updated_at' => Carbon::now(),
-                ]);
+        if (Pemeriksaan::where('id_antrian', $request->idAntrian)->exists()) {
+            // Jika data pemeriksaan sudah ada, lakukan update
+            Pemeriksaan::where('id_antrian', $request->idAntrian)->update([
+                'id_icd' => $request->icd,
+                'keluhan' => $validatedData['keluhan'],
+                'riwayat_penyakit' => $validatedData['riwayat'],
+                'keadaan_umum' => $validatedData['keadaan_umum'],
+                'berat_badan' => $validatedData['berat_badan'],
+                'suhu' => $validatedData['suhu_badan'],
+                'tekanan_darah' => $validatedData['tekanan_darah'],
+                'nadi' => $validatedData['nadi'],
+                'tindakan' => $request->tindakan ?? null,
+                'updated_at' => Carbon::now(),
+            ]);
+
+            // Perbarui status antrian menjadi "Selesai"
+            Antrian::where('id_antrian', $request->idAntrian)->update([
+                'status' => 'Selesai',
+                'updated_at' => Carbon::now(),
+            ]);
         } else {
-            // Jika belum ada data pemeriksaan, lakukan insert
-            DB::table('pemeriksaan')->insert([
+            // Jika data pemeriksaan belum ada, lakukan create
+            Pemeriksaan::create([
                 'id_antrian' => $request->idAntrian,
                 'id_icd' => $request->icd,
                 'keluhan' => $validatedData['keluhan'],
@@ -102,22 +202,23 @@ class PemeriksaanController extends Controller
                 'suhu' => $validatedData['suhu_badan'],
                 'tekanan_darah' => $validatedData['tekanan_darah'],
                 'nadi' => $validatedData['nadi'],
+                'tindakan' => $request->tindakan ?? null,
                 'tanggal_pemeriksaan' => Carbon::now(),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
-            // Update status di tabel antrian
-            DB::table('antrian')
-                ->where('id_antrian', $request->idAntrian)
-                ->update([
-                    'status' => 'Menunggu Diagnosis',
-                    'updated_at' => Carbon::now(),
-                ]);
+
+            // Perbarui status antrian menjadi "Menunggu Diagnosis"
+            Antrian::where('id_antrian', $request->idAntrian)->update([
+                'status' => 'Menunggu Diagnosis',
+                'updated_at' => Carbon::now(),
+            ]);
         }
 
-        // return redirect()->back()->with('success', 'Pemeriksaan pasien berhasil disimpan');
-        return redirect()->route('pemeriksaan')->with('success', 'Pemeriksaan pasien berhasil disimpan');
+
+        return redirect()->route('pemeriksaan')->with('success', 'Pemeriksaan pasien berhasil disimpan.');
     }
+
 
     // public function detailById($id_antrian)
     // {
@@ -153,14 +254,17 @@ class PemeriksaanController extends Controller
         $idAntrian = $id_antrian;
         // dd($idAntrian);
         // dd($pemeriksaan == null);
-        if (!is_null($pemeriksaan)) {
+        if (!$pemeriksaan === null) {
             // return redirect()->route('pemeriksaan')->with('error', 'Data pemeriksaan tidak ditemukan.');
             // dd($pemeriksaan);
             return view('petugas.poliklinik-dokter.periksa-detail', compact('pemeriksaan', 'idAntrian'));
         }
 
-        $kodeIcd = DB::table('icd')->get();
-        return view('petugas.poliklinik-dokter.periksa-detail', compact('pemeriksaan', 'idAntrian'));
+        // $kodeIcd = DB::table('icd')->where('status', 'aktif')->get();
+        $kodeIcd = ICD::where('status', 'aktif')->get();
+        // dd($pemeriksaan);
+        // dd($kodeIcd);
+        return view('petugas.poliklinik-dokter.periksa-detail', compact('pemeriksaan', 'idAntrian', 'kodeIcd'));
     }
 
     public function diagnosis()
@@ -192,24 +296,66 @@ class PemeriksaanController extends Controller
     // }
     public function getIcdList(Request $request)
     {
-        $search = $request->get('search');
-        $icdList = DB::table('icd')
-            ->select('id_icd', 'kode_icd', 'nama_penyakit')
-            ->when($search, function ($query) use ($search) {
-                return $query->where('kode_icd', 'like', "%{$search}%")
-                    ->orWhere('nama_penyakit', 'like', "%{$search}%");
+        // $search = $request->get('search');
+        // $icdList = DB::table('icd')
+        //     ->select('id_icd', 'kode_icd', 'nama_penyakit')
+        //     ->when($search, function ($query) use ($search) {
+        //         return $query->where('kode_icd', 'like', "%{$search}%")
+        //             ->orWhere('nama_penyakit', 'like', "%{$search}%");
+        //     })
+        //     ->limit(10)
+        //     ->get();
+
+        // $formattedIcdList = $icdList->map(function ($icd) {
+        //     return [
+        //         'id' => $icd->id_icd,
+        //         'text' => "{$icd->kode_icd} - {$icd->nama_penyakit}"
+        //     ];
+        // });
+
+        // return response()->json($formattedIcdList);
+        $search = $request->input('search');
+        $page = $request->input('page', 1);
+        $limit = 10;
+
+        // $icdList = ICD::where('nama_penyakit', 'like', '%' . $search . '%')
+        //     ->orWhere('kode_icd', 'like', "%$search%")
+        //     ->offset(($page - 1) * $limit)
+        //     ->limit($limit)
+        //     ->get();
+
+        // $hasMore = ICD::where('nama_penyakit', 'like', '%' . $search . '%')
+        //     ->orWhere('kode_icd', 'like', '%' . $search . '%')
+        //     ->count() > ($page * $limit);
+
+        $icdList = ICD::where('status', 'aktif') // Hanya tampilkan ICD aktif
+            ->where(function ($query) use ($search) {
+                $query->where('nama_penyakit', 'like', '%' . $search . '%')
+                    ->orWhere('kode_icd', 'like', '%' . $search . '%');
             })
-            ->limit(10)
+            ->offset(($page - 1) * $limit)
+            ->limit($limit)
             ->get();
 
-        $formattedIcdList = $icdList->map(function ($icd) {
-            return [
-                'id' => $icd->id_icd,
-                'text' => "{$icd->kode_icd} - {$icd->nama_penyakit}"
-            ];
-        });
+        $hasMore = ICD::where('status', 'aktif') // Hanya hitung ICD aktif
+            ->where(function ($query) use ($search) {
+                $query->where('nama_penyakit', 'like', '%' . $search . '%')
+                    ->orWhere('kode_icd', 'like', '%' . $search . '%');
+            })
+            ->count() > ($page * $limit);
 
-        return response()->json($formattedIcdList);
+
+        return response()->json([
+            'results' => $icdList->map(function ($icd) {
+                return [
+                    'id' => $icd->id_icd,
+                    'text' => $icd->kode_icd . ' - ' . $icd->nama_penyakit
+                ];
+            }),
+            'pagination' => [
+                'more' => $hasMore
+            ]
+        ]);
     }
 
 }

@@ -179,8 +179,7 @@
                                                         {{ $item->nama_penyakit }}</option>
                                                 @endforeach
                                             </select> --}}
-                                            <select class="form-select" id="diagnosis-utama" name="diagnosis_utama"
-                                                required>
+                                            <select class="form-select" id="diagnosis-utama" name="icd" required>
                                                 <option value="">-- Pilih --</option> {{-- Ubah value menjadi kosong untuk memastikan validasi --}}
                                                 @foreach ($kodeIcd as $item)
                                                     <option value="{{ $item->id_icd }}">{{ $item->kode_icd }} -
@@ -326,7 +325,7 @@
                             true);
                         $('#lihat_nadi').val(data.nadi).attr('readonly', true);
                         $('#rencana').val(data.tindakan).attr('readonly', true);
-                        $('#riwayat').val(data.riwayat).attr('readonly', true);
+                        $('#riwayat').val(data.riwayat_penyakit).attr('readonly', true);
                     } else {
                         // Jika data tidak ditemukan, kosongkan input dan jadikan editable
                         $('#lihat_keluhan').val('').removeAttr('readonly').attr('required',

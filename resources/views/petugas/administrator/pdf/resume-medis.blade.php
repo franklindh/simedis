@@ -112,15 +112,18 @@
     <body>
         <div class="container">
             <div class="header">
-                <img src="{{ asset('images/logo/kabupaten.png') }}" alt="Logo 1">
-                <div>
+                <div class="logo-left">
+                    {{-- <img src="{{ public_path('images/logo/kabupaten.png') }}" alt="Logo 1"> --}}
+                </div>
+                <div class="header-text">
                     <h1>PEMERINTAH KABUPATEN BIAK KOTA</h1>
                     <h2>PUSKESMAS BIAK KOTA</h2>
                     <p>Alamat: Jl. Jend. Sudirman Biak-Papua Kode Pos 98115, Email: pkmbiakkota581@gmail.com</p>
                 </div>
-                <img src="{{ asset('images/logo/puskesmas.png') }}" alt="Logo 2">
+                <div class="logo-right">
+                    {{-- <img src="{{ public_path('images/logo/puskesmas.png') }}" alt="Logo 2"> --}}
+                </div>
             </div>
-
             <h3>HASIL PEMERIKSAAN</h3>
 
             <table class="table-info">
@@ -129,12 +132,12 @@
                 </tr>
                 <tr>
                     <td>Nama Pasien: {{ $dataRekamMedisDetail->nama_pasien }}</td>
-                    <td>Tanggal Lahir: {{ $dataRekamMedisDetail->tanggal_lahir_pasien }}</td>
+                    <td>Tanggal Lahir: {{ $tanggalLahir }}</td>
                     <td>Umur: {{ $umur }} Tahun</td>
                 </tr>
                 <tr>
                     <td colspan="2">Jenis Kelamin: {{ $jk }}</td>
-                    <td>Tanggal Pemeriksaan: {{ $dataRekamMedisDetail->tanggal_pemeriksaan }}</td>
+                    <td>Tanggal Pemeriksaan: {{ $tanggal }}</td>
                 </tr>
             </table>
 
@@ -153,10 +156,13 @@
                 <p>Nadi: {{ $dataRekamMedisDetail->nadi }} x/mnt</p>
                 <p>Berat Badan: {{ $dataRekamMedisDetail->berat_badan }} kg</p>
             </div>
-
             <div class="info-section">
                 <div class="section-title">III. DIAGNOSIS</div>
                 <p>Diagnosis: {{ $dataRekamMedisDetail->nama_penyakit }}</p>
+            </div>
+            <div class="info-section">
+                <div class="section-title">IV. TINDAKAN</div>
+                <p>Tindakan: {{ $dataRekamMedisDetail->tindakan }}</p>
             </div>
         </div>
     </body>

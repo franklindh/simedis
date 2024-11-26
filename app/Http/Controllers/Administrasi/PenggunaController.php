@@ -5,17 +5,18 @@ namespace App\Http\Controllers\Administrasi;
 use App\Models\Petugas;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class PenggunaController extends Controller
 {
     public function index(Request $request)
     {
-        $daftarPengguna = Petugas::paginate(5, ['*'], 'page_pengguna');
-
+        $daftarPengguna = Petugas::orderBy('created_at', 'desc')->paginate(5, ['*'], 'page_pengguna');
+        // dd($request->ajax());
         if ($request->ajax()) {
             return view('petugas.administrator.tabel.pengguna', compact('daftarPengguna'))->render();
         }
-
+        // dd($daftarPengguna);
         return view('petugas.administrator.pengguna', compact('daftarPengguna'));
     }
 
@@ -39,7 +40,7 @@ class PenggunaController extends Controller
             'password' => bcrypt('123456'),
         ]);
 
-        return redirect()->route('pengguna')->with('success', 'Pengguna berhasil ditambahkan.');
+        return redirect()->route('data.pengguna')->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
     public function resetPassword($id)
@@ -49,16 +50,31 @@ class PenggunaController extends Controller
             'password' => bcrypt('123456'),
         ]);
 
-        return redirect()->route('pengguna')->with('success', 'Password ' . $petugas->nama_petugas . ' berhasil direset.');
+        return redirect()->route('data.pengguna')->with('success', "Password {$petugas->nama_petugas} berhasil direset.");
     }
 
     public function nonaktifPetugas($id)
     {
         $petugas = Petugas::findOrFail($id);
+        $idPetugasLogin = Auth::guard('petugas')->user()->id_petugas;
+
+        if ($idPetugasLogin == $id) {
+            return redirect()->back()->with('error', 'Anda tidak dapat menonaktifkan diri sendiri.');
+        }
+
         $petugas->update([
             'status' => 'nonaktif',
         ]);
 
-        return redirect()->route('pengguna')->with('success', 'Pengguna ' . $petugas->nama_petugas . ' berhasil dinonaktifkan.');
+        return redirect()->route('data.pengguna')->with('success', "Pengguna {$petugas->nama_petugas} berhasil dinonaktifkan.");
+    }
+    public function aktifPetugas($id)
+    {
+        $petugas = Petugas::findOrFail($id);
+        $petugas->update([
+            'status' => 'aktif',
+        ]);
+
+        return redirect()->route('data.pengguna')->with('success', "Pengguna {$petugas->nama_petugas} berhasil dinonaktifkan.");
     }
 }

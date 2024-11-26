@@ -49,3 +49,33 @@
         </div> --}}
     </div>
 </x-guest-layout>
+
+<script>
+    $(document).ready(function() {
+        // Inisialisasi Notyf
+        let notyf = new Notyf({
+            duration: 2500, // Durasi notifikasi
+            position: {
+                x: 'right', // posisi X (left/right)
+                y: 'top', // posisi Y (top/bottom)
+            }
+        });
+
+        // Menampilkan notifikasi berdasarkan session Laravel
+        @if (session('success'))
+            notyf.success('{{ session('success') }}');
+        @elseif (session('error'))
+            notyf.error('{{ session('error') }}');
+        @elseif (session('info'))
+            notyf.open({
+                type: 'info',
+                message: '{{ session('info') }}'
+            });
+        @elseif (session('warning'))
+            notyf.open({
+                type: 'warning',
+                message: '{{ session('warning') }}'
+            });
+        @endif
+    });
+</script>

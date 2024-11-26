@@ -23,12 +23,12 @@ class PendaftaranController extends Controller
         $pasienAll = DB::table('pasien')->get();
         $pasien = DB::table('pasien')->orderBy('created_at', 'desc')->paginate(5, ['*'], 'page_pasien');
         $jadwal = Jadwal::all();
-        $poli = Poli::all();
+        $poli = Poli::where('status', 'aktif')->get();
 
         $daftarAntrian = Antrian::join('jadwal', 'antrian.id_jadwal', 'jadwal.id_jadwal')
             ->join('poli', 'jadwal.id_poli', 'poli.id_poli')
             ->join('pasien', 'antrian.id_pasien', 'pasien.id_pasien')
-            ->select('antrian.*', 'jadwal.*', 'poli.*', 'pasien.*')
+            ->select('antrian.*', 'jadwal.*', 'poli.*', 'pasien.*', 'antrian.status as status')
             ->whereDate('antrian.created_at', Carbon::today()) // Menampilkan hanya data hari ini
             ->orderBy('antrian.created_at', 'desc')
             ->paginate(5, ['*'], 'page_antrian');
@@ -46,6 +46,50 @@ class PendaftaranController extends Controller
         return view('petugas.administrator.pendaftaran', compact('pasien', 'pasienAll', 'jadwal', 'poli', 'daftarAntrian'));
     }
 
+    // public function storePasien(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'nik' => 'required|numeric',
+    //         'nama_pasien' => 'required|string',
+    //         'tempat_lahir_pasien' => 'required',
+    //         'alamat_pasien' => 'required',
+    //         'tanggal_lahir_pasien' => 'required|date',
+    //         'jenis_kelamin_pasien' => 'required',
+    //         'no_telepon_pasien' => 'required|numeric',
+    //     ], [
+    //         'nik.required' => 'NIK wajib diisi.',
+    //         'nama_pasien.required' => 'Nama wajib diisi.',
+    //         'no_telepon_pasien.required' => 'No HP wajib diisi.',
+    //         'alamat_pasien.required' => 'Alamat wajib diisi.',
+    //         'tempat_lahir_pasien.required' => 'Tempat lahir wajib diisi.',
+    //         'tanggal_lahir_pasien.required' => 'Tanggal lahir wajib diisi.',
+    //         'jenis_kelamin_pasien.required' => 'Jenis kelamin wajib diisi.',
+
+    //         'nik.numeric' => 'NIK harus berupa angka.',
+    //         'no_telepon_pasien.numeric' => 'No HP harus berupa angka.',
+
+    //         'tanggal_lahir_pasien.date' => 'Tanggal lahir harus berupa tanggal.',
+    //     ]);
+
+    //     // Jika validasi gagal
+    //     if ($validator->fails()) {
+    //         // dd($validator->errors());
+    //         return redirect()->back()->withErrors($validator)->withInput()->with('modal', 'modalTambahPasien');
+    //     }
+
+    //     $namaPasien = $request->nama_pasien;
+    //     $username = $this->generateUsername($namaPasien);
+
+    //     $data = $request->all();
+    //     $data['id_pasien'] = Str::uuid();
+    //     $data['no_rekam_medis'] = Pasien::generateNoRM();
+    //     $data['username_pasien'] = $username;
+    //     $data['password'] = Hash::make('password');
+
+    //     Pasien::create($data);
+
+    //     return redirect()->route('pendaftaran')->with('success', "Pasien $namaPasien berhasil didaftarkan.");
+    // }
     public function storePasien(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -73,23 +117,38 @@ class PendaftaranController extends Controller
 
         // Jika validasi gagal
         if ($validator->fails()) {
-            // dd($validator->errors());
-            return redirect()->back()->withErrors($validator)->withInput()->with('modal', 'modalTambahPasien');
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('modal', 'modalTambahPasien');
         }
 
-        $namaPasien = $request->nama_pasien;
-        $username = $this->generateUsername($namaPasien);
+        // Gunakan transaksi database
+        DB::beginTransaction();
+        try {
+            $namaPasien = $request->nama_pasien;
+            $username = $this->generateUsername($namaPasien);
 
-        $data = $request->all();
-        $data['id_pasien'] = Str::uuid();
-        $data['no_rekam_medis'] = Pasien::generateNoRM();
-        $data['username_pasien'] = $username;
-        $data['password'] = Hash::make('password');
+            $data = $request->all();
+            $data['id_pasien'] = Str::uuid();
+            $data['no_rekam_medis'] = Pasien::generateNoRM();
+            $data['username_pasien'] = $username;
+            $data['password'] = Hash::make('password');
 
-        Pasien::create($data);
+            Pasien::create($data);
+
+            DB::commit(); // Jika berhasil, commit transaksi
+        } catch (\Exception $e) {
+            DB::rollBack(); // Jika gagal, rollback transaksi
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat menyimpan data pasien. Pastikan data NIK tidak duplikat.')
+                ->withInput();
+
+        }
 
         return redirect()->route('pendaftaran')->with('success', "Pasien $namaPasien berhasil didaftarkan.");
     }
+
 
     public function storeAntrian(Request $request)
     {
@@ -98,9 +157,6 @@ class PendaftaranController extends Controller
         $poli = Poli::find($data['id_poli']);
 
         switch ($poli->nama_poli) {
-            case 'MTBS':
-                $kodePoli = 'M';
-                break;
             case 'Anak':
                 $kodePoli = 'A';
                 break;
@@ -110,23 +166,17 @@ class PendaftaranController extends Controller
             case 'Lansia':
                 $kodePoli = 'L';
                 break;
-            case 'KIA-KB':
+            case 'KIA':
                 $kodePoli = 'K';
                 break;
-            case 'Imunisasi':
-                $kodePoli = 'I';
+            case 'Kusta':
+                $kodePoli = 'KU';
                 break;
-            case 'Laboratorium':
-                $kodePoli = 'B';
-                break;
-            case 'Konseling Gizi':
-                $kodePoli = 'KG';
-                break;
-            case 'Konseling Sanitasi':
-                $kodePoli = 'KS';
+            case 'Gigi':
+                $kodePoli = 'G';
                 break;
             default:
-                $kodePoli = 'L';
+                $kodePoli = 'X';
                 break;
         }
 
@@ -150,7 +200,7 @@ class PendaftaranController extends Controller
             'id_jadwal' => $data['id_jadwal'],
             'id_pasien' => $data['id_pasien'],
             'nomor_antrian' => $nomorAntrian,
-            'prioritas' => $data['prioritas'],
+
         ]);
 
         // Redirect kembali dengan pesan sukses
@@ -228,14 +278,25 @@ class PendaftaranController extends Controller
 
     public function getJadwal(Request $request)
     {
-        $jadwal = Jadwal::where('id_petugas', $request->doctor_id)
-            ->where('id_poli', $request->poli_id)
+        // $jadwal = Jadwal::where('id_poli', $request->poli_id)->get();
+        $jadwal = DB::table('jadwal')
+            ->join('petugas', 'jadwal.id_petugas', '=', 'petugas.id_petugas') // Sesuaikan nama tabel dan kolom
+            ->select(
+                'jadwal.id_jadwal',
+                'jadwal.tanggal_praktik',
+                'jadwal.waktu_mulai',
+                'jadwal.waktu_selesai',
+                'jadwal.keterangan',
+                'petugas.nama_petugas' // Ambil nama petugas
+            )
+            ->where('jadwal.id_poli', $request->poli_id)
             ->get();
 
         if ($jadwal->isEmpty()) {
-            return response()->json(['status' => 'kosong', 'message' => 'Jadwal kosong']);
+            return response()->json(['status' => 'kosong']);
         }
-        return response()->json(['status' => 'ada', 'data' => $jadwal]);
+
+        return response()->json(['status' => 'success', 'data' => $jadwal]);
     }
 
     public function searchPasien(Request $request)

@@ -21,18 +21,58 @@ class PetugasSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
-        for ($i = 0; $i < 10; $i++) {
-            DB::table('petugas')->insert([
-                'username_petugas' => $faker->userName,
-                'nama_petugas' => $faker->name,
-                'no_telepon_petugas' => $faker->phoneNumber,
-                'status' => $faker->randomElement(['aktif', 'nonaktif']),
-                'role' => $faker->randomElement(['Dokter', 'Poliklinik', 'Administrasi']),
+        $data = [
+            [
+                'username_petugas' => 'admin',
+                'nama_petugas' => 'Udin',
+                'role' => 'Administrasi',
+                'status' => 'aktif',
+                'password' => Hash::make('password'), // Enkripsi password
+            ],
+            [
+                'username_petugas' => 'poli',
+                'nama_petugas' => 'Jamal',
+                'role' => 'Poliklinik',
+                'status' => 'aktif',
                 'password' => Hash::make('password'),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            ],
+            [
+                'username_petugas' => 'dokter',
+                'nama_petugas' => 'Tirta',
+                'role' => 'Dokter',
+                'status' => 'aktif',
+                'password' => Hash::make('password'),
+            ],
+        ];
+
+        foreach ($data as $petugas) {
+            Petugas::create($petugas);
         }
+
+
+        // for ($i = 0; $i < 10; $i++) {
+        //     DB::table('petugas')->insert([
+        //         'username_petugas' => $faker->userName,
+        //         'nama_petugas' => $faker->name,
+        //         'no_telepon_petugas' => $faker->phoneNumber,
+        //         'status' => $faker->randomElement(['aktif', 'nonaktif']),
+        //         'role' => $faker->randomElement(['Dokter', 'Poliklinik', 'Administrasi']),
+        //         'password' => Hash::make('password'),
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //     ]);
+        // }
         // Petugas::factory()->count(50)->create();
+
+        //     DB::table('petugas')->insert([
+        //         'username_petugas' => $faker->userName,
+        //         'nama_petugas' => $faker->name,
+        //         'no_telepon_petugas' => $faker->phoneNumber,
+        //         'status' => $faker->randomElement(['aktif', 'nonaktif']),
+        //         'role' => $faker->randomElement(['Dokter', 'Poliklinik', 'Administrasi']),
+        //         'password' => Hash::make('password'),
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //     ]);
     }
 }

@@ -12,4 +12,10 @@ class ICD extends Model
     protected $table = 'icd';
 
     protected $primaryKey = 'id_icd';
+
+    protected $fillable = [
+        'kode_icd',
+        'nama_penyakit',
+        'deskripsi_penyakit'
+    ];
 }

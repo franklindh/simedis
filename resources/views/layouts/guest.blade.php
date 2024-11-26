@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,10 +15,18 @@
         <link rel="stylesheet" href="{{ asset('vendors/perfect-scrollbar/perfect-scrollbar.css') }}">
         <link rel="stylesheet" href="{{ asset('vendors/bootstrap-icons/bootstrap-icons.css') }}">
 
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- Notyf CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+        <!-- Notyf JS -->
+        <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+
         <!-- Styles and Script -->
-        @vite(["resources/css/app.css", "resources/sass/bootstrap.scss", "resources/sass/themes/dark/app-dark.scss", "resources/sass/app.scss", "resources/sass/pages/auth.scss", "resources/js/app.js"])
+        @vite(['resources/css/app.css', 'resources/sass/bootstrap.scss', 'resources/sass/themes/dark/app-dark.scss', 'resources/sass/app.scss', 'resources/sass/pages/auth.scss', 'resources/js/app.js'])
 
     </head>
+
     <body>
         <div id="auth">
             <div class="row h-100">
@@ -32,4 +41,5 @@
             </div>
         </div>
     </body>
+
 </html>

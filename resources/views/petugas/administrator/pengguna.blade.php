@@ -24,7 +24,7 @@
             {{-- <div class="col-12 col-md-6 order-md-2 order-first d-flex justify-content-end mb-2"
                 style="padding-right: 45px;"> --}}
             <div class="col-12 col-md-6 order-md-2 order-first d-flex justify-content-end mb-2">
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">Tambah
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">Tambah
                     Pengguna</button>
                 {{-- <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
@@ -37,7 +37,7 @@
     <section class="section">
         <div class="card">
             {{-- <div class="card-header">
-                <h4 class="card-title">Data Pengguna</h4>
+                <h4>Data Pengguna</h4>
             </div> --}}
             <div class="card-body">
                 <div id="data-pengguna">
@@ -55,7 +55,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('pengguna.store') }}" method="POST">
+                    <form action="{{ route('data.pengguna.store') }}" method="POST">
                         @csrf
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
@@ -118,10 +118,7 @@
     </div>
 </x-app-layout>
 <style>
-    thead {
-        color: #ffffff;
-        background-color: #465C9E;
-    }
+
 </style>
 <script>
     $(document).ready(function() {
@@ -134,7 +131,7 @@
 
         function fetch_data_pasien(page) {
             $.ajax({
-                url: "/administrasi/pengguna?page_pengguna=" + page,
+                url: "/administrasi/data/pengguna?page_pengguna=" + page,
                 success: function(data) {
                     $('#data-pengguna').html(data);
                 },
@@ -144,7 +141,6 @@
             });
         }
     });
-
     document.addEventListener('DOMContentLoaded', function() {
         var confirmModal = document.getElementById('confirmModal');
         var confirmModalMessage = document.getElementById('confirmModalMessage');
@@ -163,6 +159,7 @@
                 window.location.href = url;
             };
         });
+
 
         // Inisialisasi Notyf
         let notyf = new Notyf({

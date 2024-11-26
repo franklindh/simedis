@@ -18,6 +18,7 @@ class Pemeriksaan extends Model
         'id_antrian',
         'id_icd',
         'nadi',
+        'riwayat_penyakit',
         'tekanan_darah',
         'berat_badan',
         'keadaan_umum',

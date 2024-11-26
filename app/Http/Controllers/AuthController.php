@@ -27,7 +27,7 @@ class AuthController extends Controller
             }
         }
 
-        return redirect()->route('login')->with('fail', 'Incorrect credentials');
+        return redirect()->route('login')->with('error', 'Username atau Password salah');
     }
 
     public function logout()

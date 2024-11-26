@@ -33,7 +33,6 @@
                         <input type="text" id="searchAntrian" class="form-control" placeholder="Cari Antrian...">
                     </div>
                 </div>
-
                 <br>
                 <div id="data-antrian">
                     @include('petugas.administrator.tabel.antrian', ['daftarAntrian' => $daftarAntrian])
@@ -50,7 +49,6 @@
                         <input type="text" id="searchPasien" class="form-control" placeholder="Cari Pasien...">
                     </div>
                 </div>
-                <br>
                 <div id="data-pasien">
                     @include('petugas.administrator.tabel.pasien', ['pasien' => $pasien])
                 </div>
@@ -198,11 +196,8 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="nama_pasien" style="font-weight: bold;">Poli</label>
-                                                <select class="form-select" id="poliSelect" name="id_poli" required
+                                                {{-- <select class="form-select" id="poliSelect" name="id_poli" required
                                                     onchange="fetchDoctors()">
-                                                    {{-- <option value="Administrasi">Administrasi</option>
-                                                    <option value="Poliklinik">Poliklinik</option>
-                                                    <option value="Dokter">Dokter</option> --}}
                                                     <option value=""></option>
                                                     @foreach ($poli as $item)
                                                         <option value="{{ $item->id_poli }}">
@@ -210,12 +205,21 @@
                                                         </option>
                                                     @endforeach
                                                     <!-- Tambahkan opsi role lainnya jika ada -->
+                                                </select> --}}
+                                                <select class="form-select" id="poliSelect" name="id_poli" required
+                                                    onchange="fetchSchedule()">
+                                                    <option value="">Pilih Poli</option>
+                                                    @foreach ($poli as $item)
+                                                        <option value="{{ $item->id_poli }}">{{ $item->nama_poli }}
+                                                        </option>
+                                                    @endforeach
                                                 </select>
+
                                                 @error('nama_pasien')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                            <div class="form-group">
+                                            {{-- <div class="form-group">
                                                 <label for="nama_pasien" style="font-weight: bold;">Dokter</label>
                                                 <select class="form-select" id="dokterSelect" name="id_dokter"
                                                     required onchange="fetchSchedule()">
@@ -225,8 +229,8 @@
                                                 @error('nama_pasien')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
-                                            </div>
-                                            <div class="form-group">
+                                            </div> --}}
+                                            {{-- <div class="form-group">
                                                 <label for="nama_pasien" style="font-weight: bold;">Prioritas</label>
                                                 <select class="form-select" id="dokterSelect" name="prioritas"
                                                     required onchange="fetchSchedule()">
@@ -237,7 +241,22 @@
                                                 @error('nama_pasien')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
-                                            </div>
+                                            </div> --}}
+                                            {{-- <div class="form-group">
+                                                <label for="jenis_kelamin"
+                                                    style="font-weight: bold;">Prioritas</label>
+                                                <div>
+                                                    <input type="radio" id="prioritas" name="prioritas"
+                                                        value="Gawat" required>
+                                                    <label for="gawat">Gawat</label>
+                                                    <input type="radio" id="prioritas" name="prioritas"
+                                                        value="Tidak Gawat">
+                                                    <label for="tidak-gawat">Tidak Gawat</label>
+                                                </div>
+                                                @error('prioritas')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div> --}}
                                             <button class="btn btn-primary">Tambah Antrian</button>
                                         </div>
 
@@ -340,11 +359,40 @@
         padding: 10px;
         border-radius: 5px;
     }
+
+    #jadwalContainer .form-check {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    #jadwalContainer .form-check:hover {
+        background-color: #f8f9fa;
+        /* Warna abu-abu muda saat hover */
+    }
+
+    #jadwalContainer .form-check-input:checked+.form-check-label {
+        background-color: #d4edda;
+        /* Hijau muda */
+        border-color: #155724;
+        /* Hijau */
+        padding: 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    #jadwalContainer .form-check-label {
+        display: block;
+        /* Agar label mencakup seluruh elemen */
+    }
 </style>
 
 <script>
     let notyf = new Notyf({
-        duration: 2500, // Durasi notifikasi
+        duration: 4000, // Durasi notifikasi
         position: {
             x: 'right', // posisi X (left/right)
             y: 'top', // posisi Y (top/bottom)
@@ -411,100 +459,146 @@
         fetch_data_antrian();
     });
 
-    function fetchDoctors() {
-        var selectedPoli = $('#poliSelect').val();
+    // function fetchDoctors() {
+    //     var selectedPoli = $('#poliSelect').val();
 
-        $('#dokterSelect').empty().append('<option value="">Pilih Dokter</option>');
-        $('#jadwalContainer').empty(); // Kosongkan jadwal ketika poli berubah
+    //     $('#dokterSelect').empty().append('<option value="">Pilih Dokter</option>');
+    //     $('#jadwalContainer').empty(); // Kosongkan jadwal ketika poli berubah
+
+    //     if (selectedPoli) {
+    //         $.ajax({
+    //             url: '/administrasi/dokter', // Laravel route to fetch doctors based on selected Poli
+    //             type: 'GET',
+    //             data: {
+    //                 poli: selectedPoli
+    //             },
+    //             success: function(response) {
+
+    //                 $('#dokterSelect').empty().append('<option value="">Pilih Dokter</option>');
+    //                 $.each(response.doctors, function(key, value) {
+    //                     console.log(value);
+    //                     $('#dokterSelect').append('<option value="' + value.id_petugas + '">' +
+    //                         value.nama_petugas + '</option>');
+    //                 });
+    //             },
+    //             error: function() {
+    //                 notyf.error('Tidak ada jadwal yang tersedia');
+
+    //             }
+    //         });
+    //     } else {
+    //         $('#dokterSelect').empty().append('<option value="">Pilih Dokter</option>');
+    //     }
+    // }
+
+    // function fetchSchedule() {
+    //     var selectedDoctor = $('#dokterSelect').val();
+
+    //     if (selectedDoctor) {
+    //         $.ajax({
+    //             url: '/administrasi/jadwal',
+    //             type: 'GET',
+    //             data: {
+    //                 doctor_id: selectedDoctor,
+    //                 poli_id: $('#poliSelect').val(),
+    //             },
+    //             success: function(response) {
+    //                 if (response.status === 'kosong') {
+    //                     // Menampilkan pesan "Jadwal kosong"
+    //                     $('#jadwalContainer').html('<span class="text-danger">Jadwal kosong</span>');
+    //                 } else {
+    //                     // Menampilkan jadwal yang tersedia
+    //                     $('#jadwalContainer').empty();
+    //                     $.each(response.data, function(key, value) {
+
+    //                         var jadwalDiv = $(
+    //                             '<div class="card shadow mb-2 jadwal-item" data-id="' + value
+    //                             .id + '">' +
+    //                             '<div class="card-body border">' +
+    //                             '<input type="radio" name="id_jadwal" value="' + value
+    //                             .id_jadwal +
+    //                             '" id="jadwal_' + value.id + '" style="display:none;">' +
+    //                             '<label for="jadwal_' + value.id + '">' +
+    //                             '<p><strong>Tanggal:</strong> ' + value.tanggal_praktik +
+    //                             '</p>' +
+    //                             '<p><strong>Waktu:</strong> ' + value.waktu_mulai + ' - ' +
+    //                             value.waktu_selesai + '</p>' +
+    //                             '<p><strong>Keterangan:</strong> ' + value.keterangan + '</p>' +
+    //                             '</label>' +
+    //                             '</div>' +
+    //                             '</div>'
+    //                         );
+
+    //                         // Event click untuk memilih jadwal
+    //                         jadwalDiv.on('click', function() {
+    //                             $('input[type="radio"]', this).prop('checked', true);
+
+    //                             // Hapus border-danger ketika jadwal sudah dipilih
+    //                             $('#jadwalContainer').removeClass('border-danger');
+
+    //                             // Menambahkan efek visual saat dipilih
+    //                             $('.jadwal-item').removeClass('selected');
+    //                             $(this).addClass('selected');
+    //                         });
+    //                         $('#jadwalContainer').append(jadwalDiv);
+    //                     });
+    //                 }
+    //             },
+    //             error: function() {
+    //                 toastr.error('Tidak ada jadwal praktik');
+    //             }
+    //         });
+
+    //     } else {
+    //         $('#jadwalContainer').empty();
+    //     }
+    // }
+    function fetchSchedule() {
+        let selectedPoli = $('#poliSelect').val(); // Ambil value poli yang dipilih
+        $('#jadwalContainer').empty(); // Kosongkan kontainer jadwal
 
         if (selectedPoli) {
             $.ajax({
-                url: '/administrasi/dokter', // Laravel route to fetch doctors based on selected Poli
+                url: '/administrasi/jadwal', // Ganti dengan route yang sesuai
                 type: 'GET',
                 data: {
-                    poli: selectedPoli
-                },
-                success: function(response) {
-
-                    $('#dokterSelect').empty().append('<option value="">Pilih Dokter</option>');
-                    $.each(response.doctors, function(key, value) {
-                        console.log(value);
-                        $('#dokterSelect').append('<option value="' + value.id_petugas + '">' +
-                            value.nama_petugas + '</option>');
-                    });
-                },
-                error: function() {
-                    notyf.error('Tidak ada jadwal yang tersedia');
-
-                }
-            });
-        } else {
-            $('#dokterSelect').empty().append('<option value="">Pilih Dokter</option>');
-        }
-    }
-
-    function fetchSchedule() {
-        var selectedDoctor = $('#dokterSelect').val();
-
-        if (selectedDoctor) {
-            $.ajax({
-                url: '/administrasi/jadwal',
-                type: 'GET',
-                data: {
-                    doctor_id: selectedDoctor,
-                    poli_id: $('#poliSelect').val(),
-                },
+                    poli_id: selectedPoli
+                }, // Kirim ID poli ke server
                 success: function(response) {
                     if (response.status === 'kosong') {
-                        // Menampilkan pesan "Jadwal kosong"
                         $('#jadwalContainer').html('<span class="text-danger">Jadwal kosong</span>');
                     } else {
-                        // Menampilkan jadwal yang tersedia
-                        $('#jadwalContainer').empty();
-                        $.each(response.data, function(key, value) {
-
-                            var jadwalDiv = $(
-                                '<div class="card shadow mb-2 jadwal-item" data-id="' + value
-                                .id + '">' +
-                                '<div class="card-body border">' +
-                                '<input type="radio" name="id_jadwal" value="' + value
-                                .id_jadwal +
-                                '" id="jadwal_' + value.id + '" style="display:none;">' +
-                                '<label for="jadwal_' + value.id + '">' +
-                                '<p><strong>Tanggal:</strong> ' + value.tanggal_praktik +
-                                '</p>' +
-                                '<p><strong>Waktu:</strong> ' + value.waktu_mulai + ' - ' +
-                                value.waktu_selesai + '</p>' +
-                                '<p><strong>Keterangan:</strong> ' + value.keterangan + '</p>' +
-                                '</label>' +
-                                '</div>' +
-                                '</div>'
-                            );
-
-                            // Event click untuk memilih jadwal
-                            jadwalDiv.on('click', function() {
-                                $('input[type="radio"]', this).prop('checked', true);
-
-                                // Hapus border-danger ketika jadwal sudah dipilih
-                                $('#jadwalContainer').removeClass('border-danger');
-
-                                // Menambahkan efek visual saat dipilih
-                                $('.jadwal-item').removeClass('selected');
-                                $(this).addClass('selected');
-                            });
-                            $('#jadwalContainer').append(jadwalDiv);
+                        response.data.forEach(function(item) {
+                            // Konversi tanggal menggunakan Intl.DateTimeFormat
+                            let formattedDate = new Intl.DateTimeFormat('id-ID', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric'
+                            }).format(new Date(item.tanggal_praktik));
+                            let jadwalHTML = `
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="id_jadwal" id="jadwal_${item.id_jadwal}" value="${item.id_jadwal}">
+                                <label class="form-check-label" for="jadwal_${item.id_jadwal}">
+                                    <strong>Tanggal:</strong> ${formattedDate}<br>
+                                    <strong>Waktu:</strong> ${item.waktu_mulai} - ${item.waktu_selesai}<br>
+                                    <strong>Petugas:</strong> ${item.nama_petugas}<br>
+                                </label>
+                            </div>`;
+                            $('#jadwalContainer').append(jadwalHTML);
                         });
                     }
                 },
                 error: function() {
-                    toastr.error('Tidak ada jadwal praktik');
+                    toastr.error('Gagal mengambil data jadwal');
                 }
             });
-
         } else {
             $('#jadwalContainer').empty();
         }
     }
+
+
+
     // Tambahkan validasi agar form tidak bisa disubmit tanpa memilih jadwal
     $('#form-antrian').on('submit', function(event) {
         if (!$('input[name="id_jadwal"]:checked').val()) {
@@ -512,7 +606,7 @@
             notyf.error('Pilih jadwal terlebih dahulu');
 
             // Menambahkan efek highlight ke container jadwal
-            $('#jadwalContainer').addClass('border-danger'); // Tambahkan kelas "border-danger"
+            // $('#jadwalContainer').addClass('border-danger'); // Tambahkan kelas "border-danger"
             return false; // Hentikan proses submit
         }
     });

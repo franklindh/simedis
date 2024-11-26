@@ -18,20 +18,20 @@ class RedirectIfNotPetugas
 
     public function handle($request, Closure $next, ...$roles)
     {
-        if (Auth::guard('petugas')->check()) {
+        if (Auth::guard('petugas')->check() && Auth::guard('petugas')->user()->status === 'aktif') {
             $userRole = Auth::guard('petugas')->user()->role;
 
             // Jika '*' diberikan, izinkan semua role
             if (in_array('*', $roles) || in_array($userRole, $roles)) {
                 return $next($request);
             } else {
-                return redirect()->route('logout')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+                return redirect()->route('logout')->with('error', 'Anda tidak memiliki akses ke halaman ini');
                 // return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
             }
         }
 
         // Redirect jika user belum login
-        return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
+        return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu');
     }
 
 }

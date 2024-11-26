@@ -3,6 +3,7 @@
 
 
 use App\Http\Controllers\Administrasi\DashboardController;
+use App\Http\Controllers\Administrasi\DataController;
 use App\Http\Controllers\Administrasi\PenggunaController;
 use App\Http\Controllers\Administrasi\RekamController;
 use App\Http\Controllers\Administrasi\PendaftaranController;
@@ -61,14 +62,36 @@ Route::group(['middleware' => ['petugas:Administrasi']], function () {
         Route::get('/dokter', [PendaftaranController::class, 'getDokter']);
         Route::get('/jadwal', [PendaftaranController::class, 'getJadwal']);
 
-        Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna');
-        Route::post('/pengguna', [PenggunaController::class, 'store'])->name('pengguna.store');
-        Route::get('/pengguna/reset-password/{id_pasien}', [PenggunaController::class, 'resetPassword'])->name('pengguna.reset-password');
-        Route::get('/pengguna/nonaktif/{id_pasien}', [PenggunaController::class, 'nonaktifPetugas'])->name('pengguna.nonatif-petugas');
-
         Route::get('/search/pasien', [PendaftaranController::class, 'searchPasien'])->name('search.pasien');
         Route::get('/search/antrian', [PendaftaranController::class, 'searchAntrian'])->name('search.antrian');
 
+        Route::prefix('data')->group(function () {
+            Route::get('/icd', [DataController::class, 'indexICD'])->name('data.icd');
+            Route::post('/icd', [DataController::class, 'storeICD'])->name('data.icd.store');
+            Route::put('/icd/{id}', [DataController::class, 'updateICD'])->name('data.icd.update');
+            Route::delete('/icd/{id}', [DataController::class, 'destroyICD'])->name('data.icd.destroy');
+            Route::get('/icd/nonaktif/{id}', [DataController::class, 'nonaktifICD'])->name('data.icd.nonaktif');
+            Route::get('/icd/aktif/{id}', [DataController::class, 'aktifICD'])->name('data.icd.aktif');
+
+            Route::get('/poli', [DataController::class, 'indexPoli'])->name('data.poli');
+            Route::post('/poli', [DataController::class, 'storePoli'])->name('data.poli.store');
+            Route::put('/poli/{id}', [DataController::class, 'updatePoli'])->name('data.poli.update');
+            Route::delete('/poli/{id}', [DataController::class, 'destroyPoli'])->name('data.poli.destroy');
+            Route::get('/poli/nonaktif/{id}', [DataController::class, 'nonaktifPoli'])->name('data.poli.nonaktif');
+            Route::get('/poli/aktif/{id}', [DataController::class, 'aktifPoli'])->name('data.poli.aktif');
+
+            Route::get('/jadwal', [DataController::class, 'indexJadwal'])->name('data.jadwal');
+            Route::post('/jadwal', [DataController::class, 'storeJadwal'])->name('data.jadwal.store');
+            Route::put('/jadwal/{id}', [DataController::class, 'updateJadwal'])->name('data.jadwal.update');
+            Route::delete('/jadwal/{id}', [DataController::class, 'destroyJadwal'])->name('data.jadwal.destroy');
+
+            Route::get('/pengguna', [PenggunaController::class, 'index'])->name('data.pengguna');
+            Route::post('/pengguna', [PenggunaController::class, 'store'])->name('data.pengguna.store');
+            Route::get('/pengguna/reset-password/{id_pasien}', [PenggunaController::class, 'resetPassword'])->name('data.pengguna.reset-password');
+            Route::get('/pengguna/nonaktif/{id_pasien}', [PenggunaController::class, 'nonaktifPetugas'])->name('data.pengguna.nonaktif-petugas');
+            Route::get('/pengguna/aktif/{id_pasien}', [PenggunaController::class, 'aktifPetugas'])->name('data.pengguna.aktif-petugas');
+
+        });
     });
 });
 
@@ -91,6 +114,9 @@ Route::group(['middleware' => ['petugas:*']], function () {
     Route::get('/rekam-medis/cetak/{id}', [RekamController::class, 'cetakPDF'])->name('rekam-medis.cetak');
 
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/laporan/{type}', [DashboardController::class, 'generateLaporan'])->name('laporan.generate');
+
+
 });
 
 Route::group(['middleware' => ['petugas:Poliklinik,Dokter']], function () {

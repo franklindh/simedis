@@ -53,6 +53,19 @@
     .menu .nav-item {
         list-style: none;
     }
+
+    .sidebar-icon {
+        width: 20px;
+        /* Sesuaikan dengan ukuran ikon lainnya */
+        height: 20px;
+        /* Sesuaikan dengan ukuran ikon lainnya */
+        object-fit: contain;
+        /* Memastikan gambar tidak terdistorsi */
+        margin-right: 10px;
+        /* Beri jarak antara ikon dan teks */
+        vertical-align: middle;
+        /* Rata tengah dengan teks */
+    }
 </style>
 <div id="sidebar" class="active">
     <div class="sidebar-wrapper active">
@@ -93,17 +106,60 @@
                         </a>
                     </li>
                     {{-- <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('pendaftaran*') ? 'active' : '' }}" <a
-                        class="nav-link {{ request()->routeIs('jadwal') ? 'active' : '' }}"
-                        href="{{ route('jadwal') }}">
-                        <i class="bi bi-calendar2-week-fill"></i>Jadwal Dokter
-                    </a>
-                </li> --}}
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('pengguna*') ? 'active' : '' }}"
-                            href="{{ route('pengguna') }}">
-                            <i class="bi bi-person-fill"></i>Pengguna
+                        <a class="nav-link {{ request()->routeIs('pendaftaran*') ? 'active' : '' }}" <a
+                            class="nav-link {{ request()->routeIs('jadwal') ? 'active' : '' }}"
+                            href="{{ route('jadwal') }}">
+                            <i class="bi bi-calendar2-week-fill"></i>Jadwal Dokter
                         </a>
+                    </li> --}}
+                    {{-- <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('data*') ? 'active' : '' }}"
+                            href="{{ route('data') }}">
+                            <i class="bi bi-clipboard-data-fill"></i>Data
+                        </a>
+                    </li> --}}
+                    <li class="nav-item">
+                        <a class="nav-link dropdown-toggle {{ request()->routeIs('data*') ? 'active' : '' }}"
+                            href="#dataSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                            aria-controls="dataSubmenu">
+                            <i class="bi bi-clipboard-data-fill"></i>Data
+                        </a>
+                        <ul class="collapse list-unstyled {{ request()->routeIs('data*') ? 'show' : '' }}"
+                            id="dataSubmenu">
+                            <li>
+                                <a class="nav-link {{ request()->routeIs('data.icd') ? 'active' : '' }}"
+                                    href="{{ route('data.icd') }}"><i class="bi bi-bandaid-fill"></i>
+                                    ICD
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="collapse list-unstyled {{ request()->routeIs('data*') ? 'show' : '' }}"
+                            id="dataSubmenu">
+                            <li>
+                                <a class="nav-link {{ request()->routeIs('data.poli') ? 'active' : '' }}"
+                                    href="{{ route('data.poli') }}"><i class="bi bi-hospital-fill"></i>
+                                    Poli
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="collapse list-unstyled {{ request()->routeIs('data*') ? 'show' : '' }}"
+                            id="dataSubmenu">
+                            <li>
+                                <a class="nav-link {{ request()->routeIs('data.jadwal') ? 'active' : '' }}"
+                                    href="{{ route('data.jadwal') }}"><i class="bi bi-calendar-week-fill"></i>
+                                    Jadwal
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="collapse list-unstyled {{ request()->routeIs('data*') ? 'show' : '' }}"
+                            id="dataSubmenu">
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('data.pengguna') ? 'active' : '' }}"
+                                    href="{{ route('data.pengguna') }}">
+                                    <i class="bi bi-person-fill"></i>Pengguna
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 @elseif(Auth::guard('petugas')->user()->role == 'Poliklinik' || Auth::guard('petugas')->user()->role == 'Dokter')
                     <li class="nav-item">
