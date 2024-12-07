@@ -16,15 +16,11 @@ class PoliSeeder extends Seeder
     public function run()
     {
         DB::table('poli')->insert([
-            ['nama_poli' => 'MTBS'],
+            ['nama_poli' => 'Gigi'],
             ['nama_poli' => 'Anak'],
             ['nama_poli' => 'Umum'],
+            ['nama_poli' => 'KIA'],
             ['nama_poli' => 'Lansia'],
-            ['nama_poli' => 'KIA-KB'],
-            ['nama_poli' => 'Imunisasi'],
-            ['nama_poli' => 'Labotorium'],
-            ['nama_poli' => 'Konseling Gizi'],
-            ['nama_poli' => 'Konseling Sanitasi'],
         ]);
     }
 }

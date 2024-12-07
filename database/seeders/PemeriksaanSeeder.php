@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Pasien;
@@ -20,31 +21,73 @@ class PemeriksaanSeeder extends Seeder
      */
     public function run()
     {
-        $faker = Faker::create('id_ID');
+        // Ambil semua id_antrian dari bulan November 2024
+        $antrianNovember = DB::table('antrian')
+            ->whereMonth('created_at', 11)
+            ->whereYear('created_at', 2024)
+            ->pluck('id_antrian');
 
-        // Ambil semua ID antrian dari tabel `antrian`
-        $antrianIds = DB::table('antrian')->pluck('id_antrian');
-
-        // Ambil data ICD dari tabel `icd`
+        // Ambil semua id_icd dari tabel ICD
         $icdIds = DB::table('icd')->pluck('id_icd');
 
-        foreach ($antrianIds as $antrianId) {
-            // Buat data pemeriksaan untuk setiap antrian
+        // Data dummy untuk pemeriksaan
+        $dummyData = [
+            [
+                'nadi' => '80',
+                'tekanan_darah' => '120/80',
+                'suhu' => '36.5',
+                'berat_badan' => '60',
+                'keadaan_umum' => 'Baik',
+                'keluhan' => 'Demam selama 3 hari',
+                'riwayat_penyakit' => 'Tidak ada',
+                'keterangan' => 'Pasien stabil',
+                'tindakan' => 'Diberikan obat demam',
+            ],
+            [
+                'nadi' => '85',
+                'tekanan_darah' => '130/85',
+                'suhu' => '37.2',
+                'berat_badan' => '70',
+                'keadaan_umum' => 'Lemah',
+                'keluhan' => 'Batuk dan pilek',
+                'riwayat_penyakit' => 'Alergi debu',
+                'keterangan' => 'Gejala alergi',
+                'tindakan' => 'Obat antihistamin',
+            ],
+            [
+                'nadi' => '75',
+                'tekanan_darah' => '110/70',
+                'suhu' => '36.8',
+                'berat_badan' => '65',
+                'keadaan_umum' => 'Sesak',
+                'keluhan' => 'Nyeri dada',
+                'riwayat_penyakit' => 'Asma',
+                'keterangan' => 'Pasien memerlukan pemeriksaan lanjutan',
+                'tindakan' => 'Rujukan ke spesialis',
+            ],
+        ];
+
+        // Looping untuk setiap antrian di bulan November
+        foreach ($antrianNovember as $antrianId) {
+            $randomData = $dummyData[array_rand($dummyData)]; // Pilih data dummy secara acak
+            $randomIcd = $icdIds->random(); // Pilih id_icd secara acak
+            $randomDate = Carbon::create(2024, 11, rand(1, 30), rand(8, 16), rand(0, 59), 0);
+
             DB::table('pemeriksaan')->insert([
                 'id_antrian' => $antrianId,
-                'id_icd' => $faker->randomElement($icdIds),
-                'nadi' => $faker->numberBetween(60, 100),
-                'tekanan_darah' => $faker->numberBetween(90, 140),
-                'suhu' => $faker->randomFloat(1, 36.0, 39.0),
-                'berat_badan' => $faker->randomFloat(1, 50, 100),
-                'keadaan_umum' => $faker->randomElement(['Baik', 'Sedang', 'Lemah']),
-                'keluhan' => $faker->sentence(5),
-                'riwayat_penyakit' => $faker->sentence(8),
-                'keterangan' => $faker->sentence(6),
-                'tindakan' => $faker->sentence(5),
-                'tanggal_pemeriksaan' => now(),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'id_icd' => $randomIcd,
+                'nadi' => $randomData['nadi'],
+                'tekanan_darah' => $randomData['tekanan_darah'],
+                'suhu' => $randomData['suhu'],
+                'berat_badan' => $randomData['berat_badan'],
+                'keadaan_umum' => $randomData['keadaan_umum'],
+                'keluhan' => $randomData['keluhan'],
+                'riwayat_penyakit' => $randomData['riwayat_penyakit'],
+                'keterangan' => $randomData['keterangan'],
+                'tindakan' => $randomData['tindakan'],
+                'tanggal_pemeriksaan' => $randomDate->toDateString(), // Masukkan tanggal pemeriksaan
+                'created_at' => $randomDate,
+                'updated_at' => Carbon::now(),
             ]);
         }
     }

@@ -1,13 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="row">
-            <div class="col text-end mb-4">
-                <button id="btn-tambah-antrian" class="btn btn-success" data-bs-toggle="modal"
-                    data-bs-target="#modalTambahAntrian">Tambah Antrian</button>
-                <button id="btn-tambah-pasien" class="btn btn-success" data-bs-toggle="modal"
-                    data-bs-target="#modalTambahPasien">Tambah Pasien</button>
-            </div>
+        {{-- <div class="row"> --}}
+        <div class="text-end mb-2">
+            <button id="btn-tambah-antrian" class="btn btn-success" data-bs-toggle="modal"
+                data-bs-target="#modalTambahAntrian"><i class="bi bi-plus-lg"></i></button>
         </div>
+        {{-- </div> --}}
     </x-slot>
     <section class="section">
         <div id="card-utama" class="card fixed-card mb-4">
@@ -39,8 +37,16 @@
                 </div>
             </div>
         </div>
+        {{-- <div class="row mb-2"> --}}
+        <div class="text-end mb-2">
+            <button id="btn-tambah-pasien" class="btn btn-success" data-bs-toggle="modal"
+                data-bs-target="#modalTambahPasien"><i class="bi bi-plus-lg"></i></button>
+        </div>
+        {{-- </div> --}}
         <div id="card-utama" class="card fixed-card mb-4">
+
             <div class="card-body">
+
                 <div class="row align-items-center justify-content-between mb-4">
                     <div class="col-md-6">
                         <h4>Daftar Pasien</h4>
@@ -59,112 +65,203 @@
     <!-- Modal Tambah Pasien -->
     <div class="modal fade" id="modalTambahPasien" tabindex="-1" aria-labelledby="modalTambahPasienLabel"
         aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
+                <!-- Header Modal -->
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTambahPasienLabel">Tambah Pasien</h5>
+                    <h5 class="modal-title text-primary" id="modalTambahPasienLabel">Tambah Pasien</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <form action="{{ route('pendaftaran.pasien.store') }}" method="POST">
-                                    <div class="row">
-                                        @csrf
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="nik" style="font-weight: bold;">NIK</label>
-                                                <input type="text" class="form-control border border-dark"
-                                                    id="nik" name="nik" value="{{ old('nik') }}">
-                                                @error('nik')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="nama_pasien" style="font-weight: bold;">Nama</label>
-                                                <input type="text" class="form-control border border-dark"
-                                                    id="nama_pasien" name="nama_pasien"
-                                                    value="{{ old('nama_pasien') }}">
-                                                @error('nama_pasien')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="tempat_lahir" style="font-weight: bold;">Tempat
-                                                    Lahir</label>
-                                                <input type="text" class="form-control border border-dark"
-                                                    id="tempat_lahir" name="tempat_lahir_pasien"
-                                                    value="{{ old('tempat_lahir_pasien') }}">
-                                                @error('tempat_lahir_pasien')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="jenis_kelamin" style="font-weight: bold;">Jenis
-                                                    Kelamin</label>
-                                                <div>
-                                                    <input type="radio" id="lakiLakiAntrian"
-                                                        name="jenis_kelamin_pasien" value="L">
-                                                    <label for="lakiLakiAntrian">Laki-laki</label>
-                                                </div>
-                                                <div>
-                                                    <input type="radio" id="perempuanAntrian"
-                                                        name="jenis_kelamin_pasien" value="P">
-                                                    <label for="perempuanAntrian">Perempuan</label>
-                                                </div>
-                                                @error('jenis_kelamin_pasien')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
 
-                                        </div>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="no_telepon_pasien" style="font-weight: bold;">Nomor
-                                                    Telepon</label>
-                                                <input type="text" class="form-control border border-dark"
-                                                    id="no_telepon_pasien" name="no_telepon_pasien"
-                                                    value="{{ old('no_telepon_pasien') }}">
-                                                @error('no_telepon_pasien')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="alamat_pasien" style="font-weight: bold;">Alamat</label>
-                                                <textarea name="alamat_pasien" id="alamat_pasien" cols="30" rows="5"
-                                                    class="form-control border border-dark"></textarea>
-                                                @error('alamat_pasien')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="tanggal_lahir" style="font-weight: bold;">Tanggal
-                                                    Lahir</label>
-                                                <input type="text" class="form-control border border-dark"
-                                                    id="tanggal_lahir" name="tanggal_lahir_pasien"
-                                                    value="{{ old('tanggal_lahir_pasien') }}">
-                                                @error('tanggal_lahir_pasien')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group">
-                                                <button class="btn btn-primary">Simpan</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+                <!-- Body Modal -->
+                <div class="modal-body">
+                    <form id="formTambahPasien" action="{{ route('pendaftaran.pasien.store') }}" method="POST">
+                        @csrf
+
+                        <!-- Input NIK -->
+                        <div class="form-group mb-3">
+                            <label for="nik" class="fw-bold">NIK</label>
+                            <input type="text" id="nik" name="nik" class="form-control border border-dark"
+                                placeholder="Masukkan NIK: 1234567890123456" value="{{ old('nik') }}">
+                            @error('nik')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
-                    </div>
+
+                        <!-- Input Nama -->
+                        <div class="form-group mb-3">
+                            <label for="nama_pasien" class="fw-bold">Nama</label>
+                            <input type="text" id="nama_pasien" name="nama_pasien"
+                                class="form-control border border-dark" placeholder="Masukkan Nama"
+                                value="{{ old('nama_pasien') }}">
+                            @error('nama_pasien')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Input Tempat Lahir -->
+                        <div class="form-group mb-3">
+                            <label for="tempat_lahir" class="fw-bold">Tempat Lahir</label>
+                            <input type="text" id="tempat_lahir" name="tempat_lahir_pasien"
+                                class="form-control border border-dark" placeholder="Masukkan Tempat Lahir"
+                                value="{{ old('tempat_lahir_pasien') }}">
+                            @error('tempat_lahir_pasien')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Input Tanggal Lahir -->
+                        <div class="form-group mb-3">
+                            <label for="tanggal_lahir" class="fw-bold">Tanggal Lahir</label>
+                            <input type="text" id="tanggal_lahir" name="tanggal_lahir_pasien"
+                                class="form-control border border-dark flatpickr" placeholder="Masukkan Tanggal Lahir"
+                                value="{{ old('tanggal_lahir_pasien') }}">
+                            @error('tanggal_lahir_pasien')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Input Jenis Kelamin -->
+                        <div class="form-group mb-3">
+                            <label for="jenis_kelamin" class="fw-bold">Jenis Kelamin</label>
+                            <select id="jenis_kelamin" name="jenis_kelamin_pasien"
+                                class="form-control border border-dark">
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="L" {{ old('jenis_kelamin_pasien') == 'L' ? 'selected' : '' }}>
+                                    Laki-laki</option>
+                                <option value="P" {{ old('jenis_kelamin_pasien') == 'P' ? 'selected' : '' }}>
+                                    Perempuan</option>
+                            </select>
+                            @error('jenis_kelamin_pasien')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Input Nomor Telepon -->
+                        <div class="form-group mb-3">
+                            <label for="no_telepon_pasien" class="fw-bold">Nomor Telepon</label>
+                            <input type="text" id="no_telepon_pasien" name="no_telepon_pasien"
+                                class="form-control border border-dark" placeholder="Masukkan Nomor Telepon"
+                                value="{{ old('no_telepon_pasien') }}">
+                            @error('no_telepon_pasien')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Input Alamat -->
+                        <div class="form-group mb-3">
+                            <label for="alamat_pasien" class="fw-bold">Alamat</label>
+                            <textarea id="alamat_pasien" name="alamat_pasien" class="form-control border border-dark" rows="3"
+                                placeholder="Masukkan Alamat">{{ old('alamat_pasien') }}</textarea>
+                            @error('alamat_pasien')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="alamat_pasien" class="fw-bold">Status Pernikahan</label>
+                            <select id="jenis_kelamin" name="status_pernikahan"
+                                class="form-control border border-dark">
+                                <option value="">Pilih Status Pernikahan</option>
+                                <option value="Belum Menikah"
+                                    {{ old('status_pernikahan') == 'Belum Menikah' ? 'selected' : '' }}>
+                                    Belum Menikah</option>
+                                <option value="Menikah" {{ old('status_pernikahan') == 'Menikah' ? 'selected' : '' }}>
+                                    Menikah</option>
+                                <option value="Cerai Hidup"
+                                    {{ old('status_pernikahan') == 'Cerai Hidup' ? 'selected' : '' }}>
+                                    Cerai Hidup</option>
+                                <option value="Cerai Mati"
+                                    {{ old('status_pernikahan') == 'Cerai Mati' ? 'selected' : '' }}>
+                                    Cerai Mati</option>
+                            </select>
+                            @error('status_pernikahan')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="alamat_pasien" class="fw-bold">Nama Keluarga Terdekat</label>
+                            <input type="text" id="tempat_lahir" name="nama_keluarga_terdekat"
+                                class="form-control border border-dark" placeholder="Masukkan Nama Keluarga Terdekat"
+                                value="{{ old('nama_keluarga_terdekat') }}">
+                            @error('nama_keluarga_terdekat')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="alamat_pasien" class="fw-bold">Nomor Telepon Keluarga Terdekat</label>
+                            <input type="text" id="tempat_lahir" name="no_telepon_keluarga_terdekat"
+                                class="form-control border border-dark"
+                                placeholder=" Masukkan Nomor Telepon Keluarga Terdekat"
+                                value="{{ old('no_telepon_keluarga_terdekat') }}">
+                            @error('no_telepon_keluarga_terdekat')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+
+
+                        <!-- Tombol Simpan -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary mt-3">
+                                <span id="spinner" class="spinner-border spinner-border-sm d-none" role="status"
+                                    aria-hidden="true"></span>
+                                Simpan Data Pasien
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Modal Tambah Antrian -->
-    <div class="modal fade" id="modalTambahAntrian" tabindex="-1" aria-labelledby="modalTambahAntrianLabel"
+    <!-- Modal -->
+    <div class="modal fade" id="editPasienModal" tabindex="-1" aria-labelledby="editPasienModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="editPasienForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editPasienModalLabel">Edit Data Pasien</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="id_pasien" name="id_pasien">
+                        <div class="mb-3">
+                            <label for="nik" class="form-label">NIK</label>
+                            <input type="text" class="form-control" id="nik" name="nik" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nama_pasien" class="form-label">Nama Pasien</label>
+                            <input type="text" class="form-control" id="nama_pasien" name="nama_pasien" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="alamat_pasien" class="form-label">Alamat</label>
+                            <input type="text" class="form-control" id="alamat_pasien" name="alamat_pasien"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="no_telepon_pasien" class="form-label">No. Telepon</label>
+                            <input type="text" class="form-control" id="no_telepon_pasien"
+                                name="no_telepon_pasien">
+                        </div>
+                        <!-- Tambahkan input sesuai kebutuhan -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal Tambah Antrian -->
+    <div class="modal fade " id="modalTambahAntrian" tabindex="-1" aria-labelledby="modalTambahAntrianLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalTambahAntrianLabel">Tambah Antrian</h5>
@@ -196,16 +293,6 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="nama_pasien" style="font-weight: bold;">Poli</label>
-                                                {{-- <select class="form-select" id="poliSelect" name="id_poli" required
-                                                    onchange="fetchDoctors()">
-                                                    <option value=""></option>
-                                                    @foreach ($poli as $item)
-                                                        <option value="{{ $item->id_poli }}">
-                                                            {{ $item->nama_poli }}
-                                                        </option>
-                                                    @endforeach
-                                                    <!-- Tambahkan opsi role lainnya jika ada -->
-                                                </select> --}}
                                                 <select class="form-select" id="poliSelect" name="id_poli" required
                                                     onchange="fetchSchedule()">
                                                     <option value="">Pilih Poli</option>
@@ -214,52 +301,15 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
-
                                                 @error('nama_pasien')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                            {{-- <div class="form-group">
-                                                <label for="nama_pasien" style="font-weight: bold;">Dokter</label>
-                                                <select class="form-select" id="dokterSelect" name="id_dokter"
-                                                    required onchange="fetchSchedule()">
-                                                    <option value="">Pilih Dokter</option>
-                                                    <!-- Tambahkan opsi role lainnya jika ada -->
-                                                </select>
-                                                @error('nama_pasien')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div> --}}
-                                            {{-- <div class="form-group">
-                                                <label for="nama_pasien" style="font-weight: bold;">Prioritas</label>
-                                                <select class="form-select" id="dokterSelect" name="prioritas"
-                                                    required onchange="fetchSchedule()">
-                                                    <option value="Non Gawat">Non Gawat</option>
-                                                    <option value="Gawat">Gawat</option>
-                                                    <!-- Tambahkan opsi role lainnya jika ada -->
-                                                </select>
-                                                @error('nama_pasien')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div> --}}
-                                            {{-- <div class="form-group">
-                                                <label for="jenis_kelamin"
-                                                    style="font-weight: bold;">Prioritas</label>
-                                                <div>
-                                                    <input type="radio" id="prioritas" name="prioritas"
-                                                        value="Gawat" required>
-                                                    <label for="gawat">Gawat</label>
-                                                    <input type="radio" id="prioritas" name="prioritas"
-                                                        value="Tidak Gawat">
-                                                    <label for="tidak-gawat">Tidak Gawat</label>
-                                                </div>
-                                                @error('prioritas')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div> --}}
-                                            <button class="btn btn-primary">Tambah Antrian</button>
+
                                         </div>
 
+                                    </div>
+                                    <div class="row">
                                         <div class="col ">
                                             <label for="jadwal_praktik" style="font-weight: bold;">Jadwal
                                                 Praktek</label>
@@ -273,6 +323,8 @@
                                                 @enderror
                                             </div>
                                         </div>
+                                        <button class="btn btn-primary">Tambah Antrian</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -281,12 +333,80 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="viewPatientModal" tabindex="-1" aria-labelledby="viewPatientModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewPatientModalLabel">Detail Pasien</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="viewPatientForm">
+                        <div class="mb-3">
+                            <label for="viewNIK" class="form-label">NIK</label>
+                            <input type="text" class="form-control" id="viewNIK" name="nik" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="viewNama" class="form-label">Nama</label>
+                            <input type="text" class="form-control" id="viewNama" name="nama" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="viewTempatLahir" class="form-label">Tempat Lahir</label>
+                            <input type="text" class="form-control" id="viewTempatLahir" name="tempat_lahir"
+                                readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="viewTanggalLahir" class="form-label">Tanggal Lahir</label>
+                            <input type="date" class="form-control" id="viewTanggalLahir" name="tanggal_lahir"
+                                readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="viewJenisKelamin" class="form-label">Jenis Kelamin</label>
+                            <select id="viewJenisKelamin" name="jenis_kelamin_pasien"
+                                class="form-control border border-dark" readonly>
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="L">
+                                    Laki-laki</option>
+                                <option value="P">
+                                    Perempuan</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="viewTelepon" class="form-label">Nomor Telepon</label>
+                            <input type="text" class="form-control" id="viewTelepon" name="telepon" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="viewAlamat" class="form-label">Alamat</label>
+                            <textarea class="form-control" id="viewAlamat" name="alamat" readonly></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="viewStatusPernikahan" class="form-label">Status Pernikahan</label>
+                            <input type="text" class="form-control" id="viewStatusPernikahan"
+                                name="status_pernikahan" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="viewKeluarga" class="form-label">Nama Keluarga Terdekat</label>
+                            <input type="text" class="form-control" id="viewKeluarga" name="keluarga" readonly>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-primary" id="editPatientButton">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </x-app-layout>
 
 <style>
     thead {
-        background-color: #465C9E;
-        color: #FFFFFF;
+        border-bottom: 3px solid #000;
+        /* Ketebalan dan warna garis */
+        font-weight: bold;
+        /* Opsional: Membuat teks tebal */
     }
 
     .mb-0 {
@@ -391,8 +511,74 @@
 </style>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tangkap event klik tombol lihat
+        $(document).on('click', '.btn-view-patient', function() {
+            const nik = $(this).data('nik');
+            const nama = $(this).data('nama');
+            const tempatLahir = $(this).data('tempatLahir');
+            const tanggalLahir = $(this).data('tanggalLahir');
+            const jenisKelamin = $(this).data('jenisKelamin') === 'L' ? 'Laki-laki' :
+                'Perempuan'; // Kondisi jenis kelamin
+            const telepon = $(this).data('telepon');
+            const alamat = $(this).data('alamat');
+            const statusPernikahan = $(this).data('statusPernikahan');
+            const keluarga = $(this).data('keluarga');
+
+            // Isi data ke modal
+            $('#viewNIK').val(nik);
+            $('#viewNama').val(nama);
+            $('#viewTempatLahir').val(tempatLahir);
+            $('#viewTanggalLahir').val(tanggalLahir);
+            $('#viewJenisKelamin').val(jenisKelamin);
+            $('#viewTelepon').val(telepon);
+            $('#viewAlamat').val(alamat);
+            $('#viewStatusPernikahan').val(statusPernikahan);
+            $('#viewKeluarga').val(keluarga);
+
+            // Tampilkan modal
+            const modal = new bootstrap.Modal(document.getElementById('viewPatientModal'));
+            modal.show();
+        });
+
+        // Tangkap event klik tombol edit
+        document.getElementById('editPatientButton').addEventListener('click', function() {
+            // Ubah semua input menjadi bisa diedit
+            const inputs = document.querySelectorAll(
+                '#viewPatientForm input, #viewPatientForm textarea');
+            inputs.forEach(input => input.removeAttribute('readonly'));
+
+            // Ganti tombol menjadi "Simpan"
+            this.textContent = 'Simpan';
+            this.classList.remove('btn-primary');
+            this.classList.add('btn-success');
+
+            // Tambahkan logika penyimpanan jika tombol diklik lagi
+            this.addEventListener('click', function() {
+                // Kirim form untuk penyimpanan (sesuaikan dengan backend Anda)
+                document.getElementById('viewPatientForm').submit();
+            }, {
+                once: true
+            });
+        });
+
+        // Reset modal saat ditutup
+        document.getElementById('viewPatientModal').addEventListener('hidden.bs.modal', function() {
+            // Ubah semua input kembali menjadi readonly
+            const inputs = document.querySelectorAll(
+                '#viewPatientForm input, #viewPatientForm textarea');
+            inputs.forEach(input => input.setAttribute('readonly', true));
+
+            // Reset tombol edit menjadi default
+            const editButton = document.getElementById('editPatientButton');
+            editButton.textContent = 'Edit';
+            editButton.classList.remove('btn-success');
+            editButton.classList.add('btn-primary');
+        });
+    });
+
     let notyf = new Notyf({
-        duration: 4000, // Durasi notifikasi
+        duration: 1500, // Durasi notifikasi
         position: {
             x: 'right', // posisi X (left/right)
             y: 'top', // posisi Y (top/bottom)
@@ -706,6 +892,8 @@
                 $(this).removeClass('persisted');
             }
         });
+
+
 
         $('#patientSelect').select2({
             placeholder: "Pilih pasien",

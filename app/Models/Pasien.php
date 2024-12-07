@@ -18,6 +18,7 @@ class Pasien extends Model
         'id_pasien',
         'nik',
         'no_rekam_medis',
+        'no_kartu_jaminan',
         'username_pasien',
         'no_telepon_pasien',
         'nama_pasien',
@@ -25,6 +26,9 @@ class Pasien extends Model
         'tempat_lahir_pasien',
         'tanggal_lahir_pasien',
         'jk_pasien',
+        'status_pernikahan',
+        'nama_keluarga_terdekat',
+        'no_telepon_keluarga_terdekat',
         'password',
     ];
 

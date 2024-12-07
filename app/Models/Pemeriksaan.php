@@ -14,19 +14,24 @@ class Pemeriksaan extends Model
     protected $primaryKey = 'id_pemeriksaan';
 
     protected $fillable = [
-        'id_pemeriksaan',
         'id_antrian',
         'id_icd',
         'nadi',
-        'riwayat_penyakit',
         'tekanan_darah',
+        'suhu',
         'berat_badan',
         'keadaan_umum',
-        'suhu',
         'keluhan',
+        'riwayat_penyakit',
         'keterangan',
         'tindakan',
         'tanggal_pemeriksaan',
+        // 'kode_lab',
+        // 'jenis_pemeriksaan_lab',
+        // 'sub_pemeriksaan_lab',
+        // 'hasil_pemeriksaan_lab',
+        // 'dokumen_hasil_pemeriksaan_lab',
+        // 'status_pemeriksaan_lab',
     ];
 
     public function icd()

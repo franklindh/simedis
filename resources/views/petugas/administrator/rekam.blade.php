@@ -30,7 +30,7 @@
                             @foreach ($pasiens as $pasien)
                                 <option value="{{ $pasien->id_pasien }}"
                                     {{ request('id_pasien') == $pasien->id_pasien ? 'selected' : '' }}>
-                                    Nik: {{ $pasien->nik }} - Nama: {{ $pasien->nama_pasien }}
+                                    {{ $pasien->no_rekam_medis }} . {{ $pasien->nama_pasien }}
                                 </option>
                             @endforeach
                         </select>
@@ -62,6 +62,17 @@
                                 value="{{ isset($pasienDetail[0]) ? $pasienDetail[0]->tempat_lahir_pasien : '' }}"
                                 readonly>
                         </div>
+                        <div class="form-group">
+                            <label for="umur" style="font-weight: bold;">Umur</label>
+                            <input type="text" class="form-control" id="umur" name="umur"
+                                value="{{ isset($umur) ? $umur : '' }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="status_pernikahan" style="font-weight: bold;">Status Pernikahan</label>
+                            <input type="text" class="form-control" id="status_pernikahan" name="status_pernikahan"
+                                value="{{ isset($pasienDetail[0]) ? $pasienDetail[0]->status_pernikahan : '' }}"
+                                readonly>
+                        </div>
                     </div>
                     <div class="col">
                         <div class="form-group">
@@ -76,9 +87,10 @@
                                 readonly>
                         </div>
                         <div class="form-group">
-                            <label for="alamat_pasien" style="font-weight: bold;">Alamat</label>
-                            <input type="text" class="form-control" id="alamat_pasien" name="alamat_pasien"
-                                value="{{ isset($pasienDetail[0]) ? $pasienDetail[0]->alamat_pasien : '' }}" readonly>
+                            <label for="no_telepon_pasien" style="font-weight: bold;">Nomor Kartu Jaminan</label>
+                            <input type="text" class="form-control" id="no_telepon_pasien" name="no_telepon_pasien"
+                                value="{{ isset($pasienDetail[0]) ? $pasienDetail[0]->no_telepon_pasien : '' }}"
+                                readonly>
                         </div>
                         <div class="form-group">
                             <label for="tanggal_lahir" style="font-weight: bold;">Tanggal Lahir</label>
@@ -86,9 +98,30 @@
                                 value="{{ isset($pasienDetail[0]) ? $tanggalLahir : '' }}" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="umur" style="font-weight: bold;">Umur</label>
-                            <input type="text" class="form-control" id="umur" name="umur"
-                                value="{{ isset($umur) ? $umur : '' }}" readonly>
+                            <label for="alamat_pasien" style="font-weight: bold;">Alamat</label>
+                            <input type="text" class="form-control" id="alamat_pasien" name="alamat_pasien"
+                                value="{{ isset($pasienDetail[0]) ? $pasienDetail[0]->alamat_pasien : '' }}" readonly>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="nama_keluarga_terdekat" style="font-weight: bold;">Nama Keluarga
+                                Terdekat</label>
+                            <input type="text" class="form-control" id="nama_keluarga_terdekat"
+                                name="nama_keluarga_terdekat"
+                                value="{{ isset($pasienDetail[0]) ? $pasienDetail[0]->nama_keluarga_terdekat : '' }}"
+                                readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="no_keluarga_terdekat" style="font-weight: bold;">Nomor Telepon Keluarga
+                                Terdekat</label>
+                            <input type="text" class="form-control" id="no_keluarga_terdekat"
+                                name="no_keluarga_terdekat"
+                                value="{{ isset($pasienDetail[0]) ? $pasienDetail[0]->no_telepon_keluarga_terdekat : '' }}"
+                                readonly>
                         </div>
                     </div>
                 </div>
@@ -166,6 +199,7 @@
         </div>
     </div>
 </x-app-layout>
+
 <style>
     .btn-cetak {
         background-color: #fff;
@@ -197,6 +231,11 @@
         color: #999;
         font-style: italic;
     }
+
+    #nama_keluarga_terdekat,
+    #no_keluarga_terdekat {
+        width: 50%;
+    }
 </style>
 <script type="text/javascript">
     $(document).ready(function() {
@@ -210,9 +249,6 @@
                 }
             }
         });
-
-
-
         // Event listener untuk saat pilihan dihapus (tombol x ditekan)
         $('#pasien-select').on('select2:clear', function(e) {
             // Bersihkan semua kolom input yang terkait
@@ -223,6 +259,8 @@
             $('#no_rm').val('');
             $('#no_telepon_pasien').val('');
             $('#alamat_pasien').val('');
+            $('#nama_keluarga_terdekat').val('');
+            $('#nomor_telepon_keluarga_terdekat').val('');
             $('#tanggal_lahir').val('');
             $('#umur').val('');
 
@@ -293,20 +331,9 @@
             }
         });
 
-        //SweetAlert untuk data tidak ditemukan
-        // @if (session('error'))
-        //     Swal.fire({
-        //         icon: 'error',
-        //         title: 'Oops...',
-        //         text: "{{ session('error') }}",
-        //         confirmButtonText: 'OK',
-        //         confirmButtonColor: '#AD0B00'
-        //     });
-        // @endif
-
         // Inisialisasi Notyf
         let notyf = new Notyf({
-            duration: 2500, // Durasi notifikasi
+            duration: 2000, // Durasi notifikasi
             position: {
                 x: 'right', // posisi X (left/right)
                 y: 'top', // posisi Y (top/bottom)

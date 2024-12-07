@@ -9,7 +9,7 @@
                 <th scope="col">Nomor Antrian</th>
                 <th scope="col">Pasien</th>
                 <th scope="col">Poli</th>
-                {{-- <th scope="col">Status</th> --}}
+                <th scope="col">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -19,7 +19,7 @@
                     <td>{{ $item->nomor_antrian }}</td>
                     <td>{{ $item->nama_pasien }}</td>
                     <td>{{ $item->nama_poli }}</td>
-                    {{-- <td>{{ $item->status }}</td> --}}
+                    <td>{{ $item->status }}</td>
                 </tr>
             @endforeach
         </tbody>

@@ -15,7 +15,7 @@ return new class extends Migration {
         Schema::create('pemeriksaan', function (Blueprint $table) {
             $table->id('id_pemeriksaan');
             $table->unsignedBigInteger('id_antrian');
-            $table->unsignedBigInteger('id_icd');
+            $table->unsignedBigInteger('id_icd')->nullable();
             $table->string('nadi')->nullable();
             $table->string('tekanan_darah')->nullable();
             $table->string('suhu')->nullable();
@@ -26,6 +26,13 @@ return new class extends Migration {
             $table->text('keterangan')->nullable();
             $table->string('tindakan')->nullable();
             $table->date('tanggal_pemeriksaan');
+
+            // $table->string('kode_lab', 255)->nullable(); // Referensi kode lab dari tabel `pemeriksaan`
+            // $table->string('jenis_pemeriksaan_lab')->nullable(); // Nama kategori pemeriksaan (misal: Kimia Klinik)
+            // $table->json('sub_pemeriksaan_lab')->nullable(); // Sub-pemeriksaan dalam JSON
+            // $table->json('hasil_pemeriksaan_lab')->nullable(); // Hasil dalam JSON
+            // $table->string('dokumen_hasil_pemeriksaan_lab')->nullable(); // Path dokumen
+            // $table->enum('status_pemeriksaan_lab', ['pending', 'selesai'])->nullable(); // Status pemeriksaan
 
             $table->foreign('id_antrian')->references('id_antrian')->on('antrian')->onDelete('cascade');
             $table->foreign('id_icd')->references('id_icd')->on('icd')->onDelete('cascade');

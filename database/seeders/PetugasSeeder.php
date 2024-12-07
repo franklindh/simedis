@@ -21,6 +21,9 @@ class PetugasSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
+        $poli = DB::table('poli')
+            ->pluck('id_poli');
+
         $data = [
             [
                 'username_petugas' => 'admin',
@@ -35,11 +38,19 @@ class PetugasSeeder extends Seeder
                 'role' => 'Poliklinik',
                 'status' => 'aktif',
                 'password' => Hash::make('password'),
+                'id_poli' => $poli->random()
             ],
             [
                 'username_petugas' => 'dokter',
                 'nama_petugas' => 'Tirta',
                 'role' => 'Dokter',
+                'status' => 'aktif',
+                'password' => Hash::make('password'),
+            ],
+            [
+                'username_petugas' => 'lab',
+                'nama_petugas' => 'Asep',
+                'role' => 'Lab',
                 'status' => 'aktif',
                 'password' => Hash::make('password'),
             ],

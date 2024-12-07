@@ -14,7 +14,7 @@
                 <td>{{ $item->kode_icd }}</td>
                 <td>{{ $item->nama_penyakit }}</td>
                 <td>
-                    @if ($item->status == 'aktif')
+                    @if ($item->status_icd == 'aktif')
                         <span class="badge bg-success">
                             <i class="bi bi-check-circle"></i> Aktif
                         </span>
@@ -31,7 +31,7 @@
                     {{-- <button class="btn btn-primary btn-delete-icd" data-id="{{ $item->id_icd }}">
                         Hapus
                     </button> --}}
-                    @if ($item->status == 'aktif')
+                    @if ($item->status_icd == 'aktif')
                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal"
                             data-url="{{ route('data.icd.nonaktif', $item->id_icd) }}"
                             data-message="Apakah Anda yakin ingin menonaktifkan icd ini?">

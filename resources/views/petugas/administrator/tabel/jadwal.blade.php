@@ -17,7 +17,7 @@
                 <td>{{ \Carbon\Carbon::parse($item->tanggal_praktik)->translatedFormat('d F Y') }}</td>
                 <td>{{ $item->waktu_mulai }}</td>
                 <td>{{ $item->waktu_selesai }}</td>
-                <td> <button class="btn btn-primary btn-edit" data-id="{{ $item->id_jadwal }}"
+                <td> <button class="btn btn-primary btn-edit-jadwal" data-id="{{ $item->id_jadwal }}"
                         data-poli="{{ $item->id_poli }}" data-petugas="{{ $item->id_petugas }}"
                         data-tanggal="{{ $item->tanggal_praktik }}" data-mulai="{{ $item->waktu_mulai }}"
                         data-selesai="{{ $item->waktu_selesai }}">

@@ -18,25 +18,6 @@ class RekamController extends Controller
 {
     public function index()
     {
-        // $pasienDetail = DB::table('pemeriksaan')
-        //     ->join('antrian', 'pemeriksaan.id_antrian', 'antrian.id_antrian')
-        //     ->join('pasien', 'antrian.id_pasien', 'pasien.id_pasien')
-        //     ->join('jadwal', 'antrian.id_jadwal', 'antrian.id_jadwal')
-        //     ->join('poli', 'jadwal.id_poli', 'poli.id_poli')
-        //     ->join('petugas', 'jadwal.id_petugas', 'jadwal.id_petugas')
-        //     ->select('pemeriksaan.*', 'antrian.*', 'pasien.*', 'jadwal.*', 'poli.*', 'petugas.*')
-        //     ->paginate(5);
-        // // dd($pasienDetail);
-        // $tanggalPemeriksaan = $pasienDetail[0]->tanggal_pemeriksaan;
-        // Carbon::setLocale('id');
-        // $tanggal = Carbon::parse($tanggalPemeriksaan)->translatedFormat('l, d F Y');
-
-        // $jenisKelamin = $pasienDetail[0]->jenis_kelamin_pasien;
-        // if ($jenisKelamin == 'L') {
-        //     $jenisKelamin = 'Laki-laki';
-        // } else {
-        //     $jenisKelamin = 'Perempuan';
-        // }
         $pasiens = DB::table('pasien')->get();
 
         return view('petugas.administrator.rekam', compact('pasiens'));
@@ -58,7 +39,7 @@ class RekamController extends Controller
             ->paginate(5);
 
         if ($pasienDetail->isEmpty()) {
-            return redirect()->route('rekam')->with('error', 'Data tidak ditemukan');
+            return redirect()->route('rekam')->with('error', 'Pasien belum melakukan pemeriksaan');
         } else {
             $pasiens = DB::table('pasien')->get();
 
@@ -78,30 +59,6 @@ class RekamController extends Controller
             return view('petugas.administrator.rekam', compact('pasiens', 'pasienDetail', 'jenisKelamin', 'tanggal', 'tanggalLahir', 'umur'));
         }
     }
-
-    // public function detailById($id_pasien)
-    // {
-    //     $dataRekamMedisDetail = DB::table('pemeriksaan')
-    //         ->join('pasien', 'pemeriksaan.nik_pasien', '=', 'pasien.nik')
-    //         ->join('petugas', 'pemeriksaan.id_petugas', '=', 'petugas.id')
-    //         ->select('pemeriksaan.*', 'pasien.*', 'petugas.*')
-    //         ->where('pasien.nik', $id_pasien)
-    //         ->first();
-
-    //     $tanggalPemeriksaan = $dataRekamMedisDetail->tanggal_pemeriksaan;
-    //     Carbon::setLocale('id');
-    //     $tanggal = Carbon::parse($tanggalPemeriksaan)->translatedFormat('l, d F Y');
-
-    //     $jenisKelamin = $dataRekamMedisDetail->jenis_kelamin_pasien;
-
-    //     if ($jenisKelamin == 'L') {
-    //         $jenisKelamin = 'Laki-laki';
-    //     } else {
-    //         $jenisKelamin = 'Perempuan';
-    //     }
-
-    //     return view('petugas.administrator.detail-rekam', compact('dataRekamMedisDetail', 'jenisKelamin', 'tanggal'));
-    // }
 
     public function detailByTanggal($id_pasien, $tanggal)
     {
@@ -132,24 +89,6 @@ class RekamController extends Controller
 
     }
 
-    // public function cetak(Request $request)
-    // {
-
-    //     $tanggalPeriode = explode(" to ", $request->tanggal_periode);
-    //     $startDate = $tanggalPeriode[0];
-    //     $endDate = isset($tanggalPeriode[1]) ? $tanggalPeriode[1] : $startDate;
-
-    //     $data = DB::table('pemeriksaan')
-    //         ->join('pasien', 'pemeriksaan.nik_pasien', '=', 'pasien.nik')
-    //         ->join('petugas', 'pemeriksaan.id_petugas', '=', 'petugas.id')
-    //         ->select('pemeriksaan.*', 'pasien.*', 'petugas.*')
-    //         ->whereBetween('pemeriksaan.tanggal_pemeriksaan', [$startDate, $endDate])
-    //         ->get();
-    //     // dd($data);
-
-    //     $pdf = PDF::loadView('petugas.administrator.pdf.rekam', compact('data', 'startDate', 'endDate'));
-    //     return $pdf->stream('Rekam_Medis.pdf');
-    // }
     public function cetak(Request $request)
     {
         $tanggalPeriode = explode(' to ', $request->input('tanggal_periode'));

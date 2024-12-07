@@ -18,20 +18,31 @@ class RedirectIfNotPetugas
 
     public function handle($request, Closure $next, ...$roles)
     {
-        if (Auth::guard('petugas')->check() && Auth::guard('petugas')->user()->status === 'aktif') {
-            $userRole = Auth::guard('petugas')->user()->role;
+        $user = Auth::guard('petugas')->user();
 
-            // Jika '*' diberikan, izinkan semua role
+        // Cek apakah pengguna sudah login
+        if ($user) {
+            $userRole = $user->role;
+
+            // Cek apakah role pengguna sesuai dengan salah satu role yang diizinkan atau '*' untuk semua role
             if (in_array('*', $roles) || in_array($userRole, $roles)) {
-                return $next($request);
-            } else {
-                return redirect()->route('logout')->with('error', 'Anda tidak memiliki akses ke halaman ini');
-                // return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+                // Cek apakah status pengguna aktif
+                if ($user->status === 'aktif') {
+                    return $next($request);
+                }
+                \Log::info('User nonaktif mencoba akses.', ['user' => $user]);
+                // Jika status pengguna tidak aktif
+                return redirect()->route('login')->with('error', 'Akun Anda tidak aktif. Silakan hubungi admin.');
             }
-        }
+            \Log::info('Role tidak sesuai.', ['user' => $user, 'roles' => $roles]);
+            // Jika role pengguna tidak sesuai
+            return redirect()->route('login')->with('error', 'Anda tidak memiliki akses.');
 
-        // Redirect jika user belum login
-        return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu');
+        }
+        \Log::info('Pengguna belum login.');
+        // Redirect jika pengguna belum login
+        return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
     }
+
 
 }

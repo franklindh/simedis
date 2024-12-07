@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Skrining dan Pemeriksaan Fisik</h3>
+                <h3>Skrining dan Pemeriksaan Fisik Poli</h3>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -21,7 +21,7 @@
                         <tr>
                             <th scope="col">Nomor Antrian</th>
                             <th scope="col">No RM</th>
-                            <th scope="col">Poli</th>
+                            {{-- <th scope="col">Poli</th> --}}
                             <th scope="col">Pasien</th>
                             <th scope="col">Status</th>
                             <th scope="col"></th>
@@ -37,7 +37,7 @@
                                 <tr>
                                     <td>{{ $item->nomor_antrian }}</td>
                                     <td>{{ $item->no_rekam_medis }}</td>
-                                    <td>{{ $item->nama_poli }}</td>
+                                    {{-- <td>{{ $item->nama_poli }}</td> --}}
                                     <td>{{ $item->nama_pasien }}</td>
                                     <td>{{ $item->status }}</td>
                                     @if ($item->status === 'Menunggu')
@@ -131,10 +131,10 @@
                                 <div class="tab-pane fade" id="pemeriksaan-fisik" role="tabpanel"
                                     aria-labelledby="pemeriksaan-fisik-tab">
                                     <h4 class="mt-3">Pemeriksaan Fisik</h4>
-                                    <label for="keadaan_umum" class="form-label">Keadaan Umum</label>
-                                    <div class="d-flex mb-2">
-                                        <input type="text" class="form-control" id="lihat_keadaan_umum"
-                                            name="keadaan_umum" required>
+                                    <label for="keadaan_umum" class="form-label ">Keadaan Umum</label>
+                                    <div class=" mb-2">
+                                        <input type="text" class="form-control custom-input"
+                                            id="lihat_keadaan_umum" name="keadaan_umum" required>
                                     </div>
                                     <label for="berat_badan" class="form-label">Berat Badan</label>
                                     <div class="d-flex mb-2">
@@ -224,6 +224,14 @@
     </div>
 </x-app-layout>
 <style>
+    .custom-input {
+        max-width: 300px !important;
+        /* Atur lebar maksimal */
+        width: 100% !important;
+        /* Responsif */
+    }
+
+
     .modal-lg {
         max-width: 800px;
         /* Atur lebar maksimal modal */

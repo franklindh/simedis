@@ -116,6 +116,62 @@
             </div>
         </div>
     </div>
+    <!-- Modal Edit Pengguna -->
+    <div class="modal fade" id="editPenggunaModal" tabindex="-1" aria-labelledby="editPenggunaModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="editPenggunaForm" action="" method="POST">
+                    @csrf
+                    @method('PUT') <!-- Untuk metode PUT -->
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editPenggunaModalLabel">Edit Data Pengguna</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Input Username -->
+                        <div class="mb-3">
+                            <label for="editUsername" class="form-label">Username</label>
+                            <input type="text" id="editUsername" class="form-control" name="username_petugas"
+                                required>
+                        </div>
+
+                        <!-- Input Nama -->
+                        <div class="mb-3">
+                            <label for="editNama" class="form-label">Nama</label>
+                            <input type="text" id="editNama" class="form-control" name="nama_petugas" required>
+                        </div>
+
+                        <!-- Pilihan Peran -->
+                        <div class="mb-3">
+                            <label for="editPeran" class="form-label">Peran</label>
+                            <select id="editPeran" class="form-control" name="role" required>
+                                <option value="Administrasi">Administrasi</option>
+                                <option value="Poliklinik">Poliklinik</option>
+                                <option value="Dokter">Dokter</option>
+                            </select>
+                        </div>
+
+                        <!-- Pilihan Poli (Opsional) -->
+                        <div class="mb-3">
+                            <label for="editPoli" class="form-label">Poli</label>
+                            <select id="editPoli" class="form-control" name="id_poli">
+                                <option value="">-- Pilih Poli --</option>
+                                @foreach ($poli as $p)
+                                    <option value="{{ $p->id_poli }}">{{ $p->nama_poli }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </x-app-layout>
 <style>
 
@@ -158,6 +214,24 @@
             confirmModalConfirmBtn.onclick = function() {
                 window.location.href = url;
             };
+        });
+        $(document).on('click', '.btn-edit-pengguna', function() {
+            // Ambil data dari tombol edit
+            let id = $(this).data('id');
+            let username = $(this).data('username');
+            let nama = $(this).data('nama');
+            let peran = $(this).data('peran');
+            let poliId = $(this).data('poli-id');
+
+            // Isi data ke dalam form modal
+            $('#editPenggunaForm').attr('action', '/administrasi/data/pengguna/' + id);
+            $('#editUsername').val(username);
+            $('#editNama').val(nama);
+            $('#editPeran').val(peran);
+            $('#editPoli').val(poliId);
+
+            // Tampilkan modal
+            $('#editPenggunaModal').modal('show');
         });
 
 

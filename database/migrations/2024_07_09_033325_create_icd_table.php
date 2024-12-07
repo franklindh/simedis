@@ -16,7 +16,8 @@ return new class extends Migration {
             $table->id('id_icd');
             $table->string('kode_icd')->unique();
             $table->string('nama_penyakit');
-            $table->string('deskripsi_penyakit');
+            $table->string('deskripsi_penyakit')->nullable();
+            $table->string('status_icd')->default('aktif');
             $table->timestamps();
         });
     }

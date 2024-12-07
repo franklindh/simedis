@@ -19,11 +19,11 @@ class PendaftaranController extends Controller
 {
     public function index(Request $request)
     {
-
+        // dd('tes');
         $pasienAll = DB::table('pasien')->get();
         $pasien = DB::table('pasien')->orderBy('created_at', 'desc')->paginate(5, ['*'], 'page_pasien');
         $jadwal = Jadwal::all();
-        $poli = Poli::where('status', 'aktif')->get();
+        $poli = Poli::where('status_poli', 'aktif')->get();
 
         $daftarAntrian = Antrian::join('jadwal', 'antrian.id_jadwal', 'jadwal.id_jadwal')
             ->join('poli', 'jadwal.id_poli', 'poli.id_poli')
@@ -131,7 +131,8 @@ class PendaftaranController extends Controller
 
             $data = $request->all();
             $data['id_pasien'] = Str::uuid();
-            $data['no_rekam_medis'] = Pasien::generateNoRM();
+            $data['no_rekam_medis'] = random_int(100000, 999999);
+            // $data['no_rekam_medis'] = Pasien::generateNoRM();
             $data['username_pasien'] = $username;
             $data['password'] = Hash::make('password');
 
@@ -157,23 +158,20 @@ class PendaftaranController extends Controller
         $poli = Poli::find($data['id_poli']);
 
         switch ($poli->nama_poli) {
+            case 'Gigi':
+                $kodePoli = 'G';
+                break;
             case 'Anak':
                 $kodePoli = 'A';
                 break;
             case 'Umum':
                 $kodePoli = 'U';
                 break;
-            case 'Lansia':
-                $kodePoli = 'L';
-                break;
             case 'KIA':
                 $kodePoli = 'K';
                 break;
-            case 'Kusta':
-                $kodePoli = 'KU';
-                break;
-            case 'Gigi':
-                $kodePoli = 'G';
+            case 'Lansia':
+                $kodePoli = 'L';
                 break;
             default:
                 $kodePoli = 'X';
@@ -290,6 +288,8 @@ class PendaftaranController extends Controller
                 'petugas.nama_petugas' // Ambil nama petugas
             )
             ->where('jadwal.id_poli', $request->poli_id)
+            ->whereDate('jadwal.tanggal_praktik', '>=', Carbon::today()) // Tampilkan mulai hari ini
+            ->orderBy('jadwal.tanggal_praktik', 'asc') // Urutkan berdasarkan tanggal praktik
             ->get();
 
         if ($jadwal->isEmpty()) {

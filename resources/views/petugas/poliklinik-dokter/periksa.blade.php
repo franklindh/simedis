@@ -1,9 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
+        {{-- @dd($pasienDetail) --}}
         <div class="row">
-            <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Skrining dan Pemeriksaan Fisik</h3>
-            </div>
+            <h3>Skrining dan Pemeriksaan Fisik Poli
+                {{ isset($pasienDetail[0]->nama_poli) ? $pasienDetail[0]->nama_poli : '' }}</h3>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
@@ -21,7 +21,7 @@
                         <tr>
                             <th scope="col">Nomor Antrian</th>
                             <th scope="col">No RM</th>
-                            <th scope="col">Poli</th>
+                            {{-- <th scope="col">Poli</th> --}}
                             <th scope="col">Pasien</th>
                             <th scope="col">Status</th>
                             <th scope="col"></th>
@@ -30,14 +30,14 @@
                     <tbody>
                         @if (isset($pasienDetail) && count($pasienDetail) == 0)
                             <tr>
-                                <td colspan="3" class="text-center">Data tidak ditemukan</td>
+                                <td colspan="5" class="text-center">Belum ada pasien</td>
                             </tr>
                         @elseif (isset($pasienDetail))
                             @foreach ($pasienDetail as $index => $item)
                                 <tr>
                                     <td>{{ $item->nomor_antrian }}</td>
                                     <td>{{ $item->no_rekam_medis }}</td>
-                                    <td>{{ $item->nama_poli }}</td>
+                                    {{-- <td>{{ $item->nama_poli }}</td> --}}
                                     <td>{{ $item->nama_pasien }}</td>
                                     <td>{{ $item->status }}</td>
                                     @if ($item->status === 'Menunggu')

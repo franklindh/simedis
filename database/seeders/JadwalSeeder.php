@@ -18,32 +18,34 @@ class JadwalSeeder extends Seeder
      */
     public function run()
     {
-        $faker = Faker::create('id_ID');
-
-        // Ambil data dokter dan poli dari database
+        // Tentukan rentang tanggal 3 bulan kebelakang
+        $startDate = Carbon::create(2024, 11, 1); // Awal November 2024
+        $endDate = Carbon::create(2024, 11, 30); // Akhir November 2024
+        $poli = DB::table('poli')
+            ->pluck('id_poli');
         $dokter = DB::table('petugas')
             ->where('role', 'Dokter')
             ->pluck('id_petugas');
+        $waktuMulai = '08:00:00';
+        $waktuSelesai = '16:00:00';
 
-        $poli = DB::table('poli')
-            ->pluck('id_poli');
-
-        // Tanggal awal dan akhir untuk jadwal
-        $startDate = Carbon::create(2024, 11, 25); // 23 November 2024
-        $endDate = Carbon::create(2024, 11, 30);   // 30 November 2024
-
-        while ($startDate->lte($endDate)) {
-            foreach ($dokter as $dokterId) {
-                Jadwal::create([
-                    'tanggal_praktik' => $startDate->format('Y-m-d'),
-                    'waktu_mulai' => '07:00:00',
-                    'waktu_selesai' => '12:00:00',
-                    'keterangan' => 'Jadwal praktek pagi',
-                    'id_petugas' => $dokterId,
-                    'id_poli' => $poli->random(), // Pilih poli secara acak
-                ]);
+        while ($startDate->lessThanOrEqualTo($endDate)) {
+            foreach ($poli as $poliId) {
+                foreach ($dokter as $petugasId) {
+                    // Insert jadwal untuk setiap kombinasi poli dan petugas
+                    DB::table('jadwal')->insert([
+                        'id_petugas' => $petugasId,
+                        'id_poli' => $poliId,
+                        'tanggal_praktik' => $startDate->toDateString(),
+                        'waktu_mulai' => $waktuMulai,
+                        'waktu_selesai' => $waktuSelesai,
+                        'keterangan' => 'Jadwal praktik',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
             }
-            $startDate->addDay(); // Tambahkan 1 hari
+            $startDate->addDay(); // Increment hari
         }
     }
 }

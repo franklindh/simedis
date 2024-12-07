@@ -5,8 +5,9 @@
             <th>Username</th>
             <th>Nama</th>
             <th>Peran</th>
+            <th>Poli</th>
             <th>Status Akun</th>
-            <th colspan="2"></th>
+            <th colspan="3"></th>
         </tr>
     </thead>
     <tbody>
@@ -19,7 +20,8 @@
               <td>{{ $item->username_petugas }}</td> --}}
                 <td>{{ $item->username_petugas }}</td>
                 <td>{{ $item->nama_petugas }}</td>
-                <td>{{ $item->role }}</td>
+                <td>{{ $item->role }} </td>
+                <td>{{ $item->nama_poli ?? '' }} </td>
                 <td>
                     @if ($item->status == 'aktif')
                         <span class="badge bg-success">
@@ -53,6 +55,11 @@
                     @else
                         {{-- <span class="text-muted">Tidak dapat mengubah status diri sendiri</span> --}}
                     @endif
+                    <button class="btn btn-sm btn-primary btn-edit-pengguna" data-id="{{ $item->id_petugas }}"
+                        data-username="{{ $item->username_petugas }}" data-nama="{{ $item->nama_petugas }}"
+                        data-peran="{{ $item->role }}" data-poli-id="{{ $item->id_poli }}">
+                        Edit
+                    </button>
                 </td>
 
 

@@ -90,6 +90,7 @@ Route::group(['middleware' => ['petugas:Administrasi']], function () {
             Route::get('/pengguna/reset-password/{id_pasien}', [PenggunaController::class, 'resetPassword'])->name('data.pengguna.reset-password');
             Route::get('/pengguna/nonaktif/{id_pasien}', [PenggunaController::class, 'nonaktifPetugas'])->name('data.pengguna.nonaktif-petugas');
             Route::get('/pengguna/aktif/{id_pasien}', [PenggunaController::class, 'aktifPetugas'])->name('data.pengguna.aktif-petugas');
+            Route::put('/pengguna/{id}', [PenggunaController::class, 'updatePengguna'])->name('data.pengguna.update');
 
         });
     });
@@ -107,6 +108,8 @@ Route::group(['middleware' => ['petugas:Dokter']], function () {
     Route::get('/diagnosis/{id_antrian}', [PemeriksaanController::class, 'diagnosis'])->name('diagnosis');
 });
 
+
+
 Route::group(['middleware' => ['petugas:*']], function () {
     Route::get('/rekam', [RekamController::class, 'index'])->name('rekam');
     Route::get('/rekam/detail/{id_pasien}/{tanggal}', [RekamController::class, 'detailByTanggal'])->name('detailByTanggal');
@@ -123,12 +126,17 @@ Route::group(['middleware' => ['petugas:Poliklinik,Dokter']], function () {
     Route::get('/pemeriksaan', [PemeriksaanController::class, 'index'])->name('pemeriksaan');
     Route::post('/pemeriksaan', [PemeriksaanController::class, 'store'])->name('pemeriksaan.store');
     Route::get('/pemeriksaan/{id_antrian}', [PemeriksaanController::class, 'show'])->name('pemeriksaan.show');
-
     Route::get('/icd-list', [PemeriksaanController::class, 'getIcdList'])->name('icd.list');
-
 });
 
+Route::group(['middleware' => ['petugas:Lab,Dokter']], function () {
+    Route::get('/lab', [PemeriksaanController::class, 'lab'])->name('lab');
+    Route::get('/lab/cari', [PemeriksaanController::class, 'labCari'])->name('lab.cari');
+    Route::get('/lab/{id}', [PemeriksaanController::class, 'labShow'])->name('lab.show');
+    Route::post('/lab', [PemeriksaanController::class, 'labStore'])->name('lab.store');
+    Route::get('/lab/generate-pdf/{id}', [PemeriksaanController::class, 'generatePdf'])->name('lab.cetakPDF');
 
+});
 
 
 

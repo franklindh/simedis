@@ -12,7 +12,7 @@
                     {{-- <td>{{ ($pasien->currentPage() - 1) * $pasien->perPage() + $loop->iteration }}</td> --}}
                     <td>{{ $item->nama_poli }}</td>
                     <td>
-                        @if ($item->status == 'aktif')
+                        @if ($item->status_poli == 'aktif')
                             <span class="badge bg-success">
                                 <i class="bi bi-check-circle"></i> Aktif
                             </span>
@@ -29,7 +29,7 @@
                         {{-- <button class="btn btn-primary btn-delete-poli" data-id="{{ $item->id_poli }}">
                             Hapus
                         </button> --}}
-                        @if ($item->status == 'aktif')
+                        @if ($item->status_poli == 'aktif')
                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal"
                                 data-url="{{ route('data.poli.nonaktif', $item->id_poli) }}"
                                 data-message="Apakah Anda yakin ingin menonaktifkan poli ini?">

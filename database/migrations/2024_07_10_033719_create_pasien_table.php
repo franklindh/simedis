@@ -24,6 +24,9 @@ return new class extends Migration {
             $table->string('tempat_lahir_pasien');
             $table->date('tanggal_lahir_pasien');
             $table->enum('jk_pasien', ['L', 'P']);
+            $table->enum('status_pernikahan', ['Belum Menikah', 'Menikah', 'Cerai Hidup', 'Cerai Mati']);
+            $table->string('nama_keluarga_terdekat')->nullable();
+            $table->string('no_telepon_keluarga_terdekat')->nullable();
             $table->string('password');
             $table->timestamps();
         });

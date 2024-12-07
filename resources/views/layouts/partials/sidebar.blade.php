@@ -83,13 +83,7 @@
                     <h6>MENU</h6>
                 </li>
                 <hr> --}}
-                <li class="nav-item">
-                    <!-- Aktif pada route rekam atau cari -->
-                    <a class="nav-link {{ request()->routeIs('rekam') || request()->routeIs('cari') || request()->routeIs('detailByTanggal') ? 'active' : '' }}"
-                        href="{{ route('rekam') }}">
-                        <i class="bi bi-grid-fill"></i>Rekam Medis
-                    </a>
-                </li>
+
                 @if (Auth::guard('petugas')->user()->role == 'Administrasi')
                     <li class="nav-item">
                         {{-- <a class="nav-link {{ request()->routeIs('pendaftaran*') ? 'active' : '' }}" --}}
@@ -163,12 +157,25 @@
                     </li>
                 @elseif(Auth::guard('petugas')->user()->role == 'Poliklinik' || Auth::guard('petugas')->user()->role == 'Dokter')
                     <li class="nav-item">
+                        <!-- Aktif pada route rekam atau cari -->
+                        <a class="nav-link {{ request()->routeIs('rekam') || request()->routeIs('cari') || request()->routeIs('detailByTanggal') ? 'active' : '' }}"
+                            href="{{ route('rekam') }}">
+                            <i class="bi bi-grid-fill"></i>Rekam Medis
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('pemeriksaan', 'pemeriksaan.show') ? 'active' : '' }}"
                             href="{{ route('pemeriksaan') }}">
                             <i class="bi bi-calendar2-week-fill"></i>Pemeriksaan
                         </a>
                     </li>
-                @else
+                @elseif(Auth::guard('petugas')->user()->role == 'Lab')
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('lab', 'lab.show') ? 'active' : '' }}"
+                            href="{{ route('lab') }}">
+                            <i class="bi bi-flask"></i>Pemeriksaan Lab
+                        </a>
+                    </li>
                 @endif
             </ul>
         </div>

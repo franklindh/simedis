@@ -45,6 +45,8 @@ class PasienSeeder extends Seeder
                 'tempat_lahir_pasien' => $faker->city,
                 'tanggal_lahir_pasien' => $faker->date('Y-m-d', '2010-12-31'),
                 'jk_pasien' => $faker->randomElement(['P', 'L']),
+                'nama_keluarga_terdekat' => $faker->name,
+                'no_telepon_keluarga_terdekat' => $faker->phoneNumber,
                 'password' => Hash::make('password'),
             ]);
         }

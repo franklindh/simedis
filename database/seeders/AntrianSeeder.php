@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -18,52 +19,41 @@ class AntrianSeeder extends Seeder
      */
     public function run()
     {
-        $faker = Faker::create('id_ID');
+        // Tentukan rentang tanggal 3 bulan kebelakang
+        $startDate = Carbon::now()->subMonths(3);
+        $endDate = Carbon::now();
+        $polis = [
+            1 => 'G', // Gigi
+            2 => 'A', // Anak
+            3 => 'U', // Umum
+            4 => 'K', // KIA
+            5 => 'L'  // Lansia
+        ]; // Inisial berdasarkan poli
+        $pasienIds = DB::table('pasien')
+            ->pluck('id_pasien'); // Contoh ID Pasien
+        $statuses = ['Menunggu'];
+        $priorities = ['Gawat', 'Non Gawat'];
 
-        // Daftar kode poli
-        $kodePolis = [
-            'Anak' => 'A',
-            'Umum' => 'U',
-            'Lansia' => 'L',
-            'KIA' => 'K',
-            'Kusta' => 'KU',
-            'Gigi' => 'G',
-        ];
-
-        // Ambil jadwal beserta nama poli dengan join
         $jadwals = DB::table('jadwal')
-            ->join('poli', 'jadwal.id_poli', '=', 'poli.id_poli')
-            ->select('jadwal.id_jadwal', 'poli.nama_poli', 'poli.id_poli')
+            ->whereMonth('tanggal_praktik', 11)
+            ->whereYear('tanggal_praktik', 2024)
             ->get();
 
+
         foreach ($jadwals as $jadwal) {
-            $kodePoli = $kodePolis[$jadwal->nama_poli] ?? 'X';
-
-            $jumlahAntrian = DB::table('antrian')
-                ->where('id_jadwal', $jadwal->id_jadwal)
-                ->count();
-
-            $jumlahAntrianBaru = rand(5, 10);
-
-            for ($i = 1; $i <= $jumlahAntrianBaru; $i++) {
-                $nomorUrut = $jumlahAntrian + $i;
-                $nomorAntrian = $kodePoli . sprintf('%03d', $nomorUrut);
-
-                // Tambahkan waktu yang berbeda untuk setiap entri
-                $createdAt = now()->addSeconds($i); // Tambahkan beberapa detik untuk setiap entri
-
+            foreach ($pasienIds as $pasienId) {
+                // Generate data antrian
                 DB::table('antrian')->insert([
-                    'nomor_antrian' => $nomorAntrian,
                     'id_jadwal' => $jadwal->id_jadwal,
-                    'id_pasien' => $faker->randomElement(DB::table('pasien')->pluck('id_pasien')->toArray()),
-                    'prioritas' => 'Non Gawat',
-                    // 'status' => 'Selesai',
-                    'created_at' => $createdAt,
-                    'updated_at' => $createdAt,
+                    'id_pasien' => $pasienId,
+                    'nomor_antrian' => $polis[$jadwal->id_poli] . rand(100, 999), // Nomor antrian dengan inisial poli
+                    'prioritas' => $priorities[array_rand($priorities)],
+                    'status' => $statuses[array_rand($statuses)],
+                    'created_at' => Carbon::parse($jadwal->tanggal_praktik)->setTime(rand(8, 15), rand(0, 59))->toDateTimeString(),
+                    'updated_at' => now(),
                 ]);
             }
         }
-
     }
 
 }

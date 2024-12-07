@@ -6,18 +6,33 @@ use App\Models\Petugas;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PenggunaController extends Controller
 {
     public function index(Request $request)
     {
-        $daftarPengguna = Petugas::orderBy('created_at', 'desc')->paginate(5, ['*'], 'page_pengguna');
-        // dd($request->ajax());
+        // $daftarPengguna = Petugas::orderBy('created_at', 'desc')->paginate(5, ['*'], 'page_pengguna');
+        $poli = DB::table('poli')->get();
+        $daftarPengguna = DB::table('petugas')
+            ->leftJoin('poli', 'petugas.id_poli', '=', 'poli.id_poli')
+            ->select(
+                'petugas.id_petugas',
+                'petugas.username_petugas',
+                'petugas.nama_petugas',
+                'petugas.role',
+                'petugas.status',
+                'poli.nama_poli',
+                'poli.id_poli'
+            )
+            ->orderBy('petugas.created_at', 'desc')
+            ->paginate(5, ['*'], 'page_pengguna');
+
         if ($request->ajax()) {
             return view('petugas.administrator.tabel.pengguna', compact('daftarPengguna'))->render();
         }
         // dd($daftarPengguna);
-        return view('petugas.administrator.pengguna', compact('daftarPengguna'));
+        return view('petugas.administrator.pengguna', compact('daftarPengguna', 'poli'));
     }
 
     public function store(Request $request)
@@ -77,4 +92,37 @@ class PenggunaController extends Controller
 
         return redirect()->route('data.pengguna')->with('success', "Pengguna {$petugas->nama_petugas} berhasil dinonaktifkan.");
     }
+
+    public function updatePengguna(Request $request, $id)
+    {
+
+        // Ambil data pengguna berdasarkan ID
+        $pengguna = Petugas::findOrFail($id);
+        // Validasi data input
+        $validatedData = $request->validate([
+            'username_petugas' => 'required|string|max:255|exists:Petugas,username_petugas',
+            'nama_petugas' => 'required|string|max:255',
+            'role' => 'required|in:Administrasi,Poliklinik,Dokter',
+            'id_poli' => 'nullable|exists:Poli,id_poli', // Hanya valid jika poli dipilih
+        ], [
+            'username.required' => 'Username wajib diisi.',
+            'username.unique' => 'Username sudah digunakan.',
+            'nama.required' => 'Nama wajib diisi.',
+            'peran.required' => 'Peran wajib dipilih.',
+            'id_poli.exists' => 'Poli yang dipilih tidak valid.',
+        ]);
+
+        // Update data pengguna
+        $pengguna->update([
+            'username_petugas' => $validatedData['username_petugas'],
+            'nama_petugas' => $validatedData['nama_petugas'],
+            'role' => $validatedData['role'],
+            'id_poli' => $validatedData['id_poli'] ?? null, // Null jika poli tidak dipilih
+        ]);
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('data.pengguna')->with('success', 'Data pengguna berhasil diperbarui.');
+    }
+
+
 }

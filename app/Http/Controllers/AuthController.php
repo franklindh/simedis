@@ -24,6 +24,8 @@ class AuthController extends Controller
                     return redirect()->route('rekam');
                 case 'Poliklinik':
                     return redirect()->route('rekam');
+                case 'Lab':
+                    return redirect()->route('lab');
             }
         }
 

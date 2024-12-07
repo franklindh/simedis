@@ -21,6 +21,7 @@ class Petugas extends Model implements AuthenticatableContract
         'nama_petugas',
         'status',
         'role',
+        'id_poli',
         'password',
     ];
 

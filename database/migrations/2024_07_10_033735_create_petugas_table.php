@@ -14,12 +14,15 @@ return new class extends Migration {
     {
         Schema::create('petugas', function (Blueprint $table) {
             $table->id('id_petugas');
+            $table->unsignedBigInteger('id_poli')->nullable();
             $table->string('username_petugas')->unique();
             $table->string('nama_petugas');
-            $table->string('no_telepon_petugas');
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
-            $table->enum('role', ['Administrasi', 'Poliklinik', 'Dokter']);
+            $table->enum('role', ['Administrasi', 'Poliklinik', 'Dokter', 'Lab']);
             $table->string('password');
+
+            $table->foreign('id_poli')->references('id_poli')->on('poli')->onDelete('cascade');
+
             $table->timestamps();
         });
     }
