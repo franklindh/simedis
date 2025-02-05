@@ -29,12 +29,15 @@
                     @csrf
                     <div class="mb-3">
                         <label for="kode_icd" class="form-label">Kode ICD</label>
-                        <input type="text" id="kode_icd" name="kode_icd" class="form-control"
+                        <input type="text" id="kode_icd" name="kode_icd" class="form-control w-25"
                             placeholder="Masukkan kode ICD" required>
+                        @error('kode_icd')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="mb-3">
                         <label for="nama_penyakit" class="form-label">Nama Penyakit</label>
-                        <input type="text" id="nama_penyakit" name="nama_penyakit" class="form-control"
+                        <input type="text" id="nama_penyakit" name="nama_penyakit" class="form-control w-50"
                             placeholder="Masukkan nama penyakit" required>
                     </div>
                     {{-- <div class="mb-3">
@@ -62,11 +65,23 @@
                         <div class="mb-3">
                             <label for="editKodeICD" class="form-label">Kode ICD</label>
                             <input type="text" id="editKodeICD" class="form-control" name="kode_icd" required>
+                            @error('kode_icd')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label for="editNamaPenyakit" class="form-label">Nama Penyakit</label>
                             <input type="text" id="editNamaPenyakit" class="form-control" name="nama_penyakit"
                                 required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editNamaPenyakit" class="form-label">Status ICD</label>
+                            <select id="editStatusICD" name="status_icd" class="form-control" required>
+                                <option value="aktif">
+                                    Aktif</option>
+                                <option value="nonaktif">
+                                    Nonaktif</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -100,7 +115,8 @@
         </div>
     </div>
     <!-- Modal Konfirmasi -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -112,7 +128,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-danger" id="confirmModalConfirmBtn">Lanjutkan</button>
+                    <button type="button" class="btn btn-primary" id="confirmModalConfirmBtn">Lanjutkan</button>
                 </div>
             </div>
         </div>
@@ -158,12 +174,14 @@
             let kode = $(this).data('kode');
             let nama = $(this).data('nama');
             let deskripsi = $(this).data('deskripsi');
-
+            let status = $(this).data('status');
             // Isi data ke dalam form modal
             $('#editICDForm').attr('action', '/administrasi/data/icd/' + id);
             $('#editKodeICD').val(kode);
             $('#editNamaPenyakit').val(nama);
             $('#editDeskripsiPenyakit').val(deskripsi);
+            // Atur nilai pada select Status
+            $('#editStatusICD').val(status);
 
             // Tampilkan modal
             $('#editICDModal').modal('show');

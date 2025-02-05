@@ -81,7 +81,7 @@
                         <!-- Input NIK -->
                         <div class="form-group mb-3">
                             <label for="nik" class="fw-bold">NIK</label>
-                            <input type="text" id="nik" name="nik" class="form-control border border-dark"
+                            <input type="text" id="nik" name="nik" class="form-control "
                                 placeholder="Masukkan NIK: 1234567890123456" value="{{ old('nik') }}">
                             @error('nik')
                                 <div class="text-danger">{{ $message }}</div>
@@ -91,9 +91,8 @@
                         <!-- Input Nama -->
                         <div class="form-group mb-3">
                             <label for="nama_pasien" class="fw-bold">Nama</label>
-                            <input type="text" id="nama_pasien" name="nama_pasien"
-                                class="form-control border border-dark" placeholder="Masukkan Nama"
-                                value="{{ old('nama_pasien') }}">
+                            <input type="text" id="nama_pasien" name="nama_pasien" class="form-control"
+                                placeholder="Masukkan Nama" value="{{ old('nama_pasien') }}">
                             @error('nama_pasien')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -102,9 +101,8 @@
                         <!-- Input Tempat Lahir -->
                         <div class="form-group mb-3">
                             <label for="tempat_lahir" class="fw-bold">Tempat Lahir</label>
-                            <input type="text" id="tempat_lahir" name="tempat_lahir_pasien"
-                                class="form-control border border-dark" placeholder="Masukkan Tempat Lahir"
-                                value="{{ old('tempat_lahir_pasien') }}">
+                            <input type="text" id="tempat_lahir" name="tempat_lahir_pasien" class="form-control"
+                                placeholder="Masukkan Tempat Lahir" value="{{ old('tempat_lahir_pasien') }}">
                             @error('tempat_lahir_pasien')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -114,7 +112,7 @@
                         <div class="form-group mb-3">
                             <label for="tanggal_lahir" class="fw-bold">Tanggal Lahir</label>
                             <input type="text" id="tanggal_lahir" name="tanggal_lahir_pasien"
-                                class="form-control border border-dark flatpickr" placeholder="Masukkan Tanggal Lahir"
+                                class="form-control flatpickr" placeholder="Masukkan Tanggal Lahir"
                                 value="{{ old('tanggal_lahir_pasien') }}">
                             @error('tanggal_lahir_pasien')
                                 <div class="text-danger">{{ $message }}</div>
@@ -124,9 +122,8 @@
                         <!-- Input Jenis Kelamin -->
                         <div class="form-group mb-3">
                             <label for="jenis_kelamin" class="fw-bold">Jenis Kelamin</label>
-                            <select id="jenis_kelamin" name="jenis_kelamin_pasien"
-                                class="form-control border border-dark">
-                                <option value="">Pilih Jenis Kelamin</option>
+                            <select id="jenis_kelamin" name="jenis_kelamin_pasien" class="form-control">
+                                <option value="" disabled selected>Pilih Jenis Kelamin</option>
                                 <option value="L" {{ old('jenis_kelamin_pasien') == 'L' ? 'selected' : '' }}>
                                     Laki-laki</option>
                                 <option value="P" {{ old('jenis_kelamin_pasien') == 'P' ? 'selected' : '' }}>
@@ -141,7 +138,7 @@
                         <div class="form-group mb-3">
                             <label for="no_telepon_pasien" class="fw-bold">Nomor Telepon</label>
                             <input type="text" id="no_telepon_pasien" name="no_telepon_pasien"
-                                class="form-control border border-dark" placeholder="Masukkan Nomor Telepon"
+                                class="form-control" placeholder="Masukkan Nomor Telepon"
                                 value="{{ old('no_telepon_pasien') }}">
                             @error('no_telepon_pasien')
                                 <div class="text-danger">{{ $message }}</div>
@@ -151,7 +148,7 @@
                         <!-- Input Alamat -->
                         <div class="form-group mb-3">
                             <label for="alamat_pasien" class="fw-bold">Alamat</label>
-                            <textarea id="alamat_pasien" name="alamat_pasien" class="form-control border border-dark" rows="3"
+                            <textarea id="alamat_pasien" name="alamat_pasien" class="form-control" rows="3"
                                 placeholder="Masukkan Alamat">{{ old('alamat_pasien') }}</textarea>
                             @error('alamat_pasien')
                                 <div class="text-danger">{{ $message }}</div>
@@ -159,9 +156,8 @@
                         </div>
                         <div class="form-group mb-3">
                             <label for="alamat_pasien" class="fw-bold">Status Pernikahan</label>
-                            <select id="jenis_kelamin" name="status_pernikahan"
-                                class="form-control border border-dark">
-                                <option value="">Pilih Status Pernikahan</option>
+                            <select id="jenis_kelamin" name="status_pernikahan" class="form-control">
+                                <option value="" disabled selected>Pilih Status Pernikahan</option>
                                 <option value="Belum Menikah"
                                     {{ old('status_pernikahan') == 'Belum Menikah' ? 'selected' : '' }}>
                                     Belum Menikah</option>
@@ -181,7 +177,7 @@
                         <div class="form-group mb-3">
                             <label for="alamat_pasien" class="fw-bold">Nama Keluarga Terdekat</label>
                             <input type="text" id="tempat_lahir" name="nama_keluarga_terdekat"
-                                class="form-control border border-dark" placeholder="Masukkan Nama Keluarga Terdekat"
+                                class="form-control" placeholder="Masukkan Nama Keluarga Terdekat"
                                 value="{{ old('nama_keluarga_terdekat') }}">
                             @error('nama_keluarga_terdekat')
                                 <div class="text-danger">{{ $message }}</div>
@@ -190,16 +186,12 @@
                         <div class="form-group mb-3">
                             <label for="alamat_pasien" class="fw-bold">Nomor Telepon Keluarga Terdekat</label>
                             <input type="text" id="tempat_lahir" name="no_telepon_keluarga_terdekat"
-                                class="form-control border border-dark"
-                                placeholder=" Masukkan Nomor Telepon Keluarga Terdekat"
+                                class="form-control" placeholder=" Masukkan Nomor Telepon Keluarga Terdekat"
                                 value="{{ old('no_telepon_keluarga_terdekat') }}">
                             @error('no_telepon_keluarga_terdekat')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-
-
-
                         <!-- Tombol Simpan -->
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary mt-3">
@@ -213,51 +205,6 @@
             </div>
         </div>
     </div>
-    <!-- Modal -->
-    <div class="modal fade" id="editPasienModal" tabindex="-1" aria-labelledby="editPasienModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form id="editPasienForm" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editPasienModalLabel">Edit Data Pasien</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" id="id_pasien" name="id_pasien">
-                        <div class="mb-3">
-                            <label for="nik" class="form-label">NIK</label>
-                            <input type="text" class="form-control" id="nik" name="nik" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="nama_pasien" class="form-label">Nama Pasien</label>
-                            <input type="text" class="form-control" id="nama_pasien" name="nama_pasien" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="alamat_pasien" class="form-label">Alamat</label>
-                            <input type="text" class="form-control" id="alamat_pasien" name="alamat_pasien"
-                                required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="no_telepon_pasien" class="form-label">No. Telepon</label>
-                            <input type="text" class="form-control" id="no_telepon_pasien"
-                                name="no_telepon_pasien">
-                        </div>
-                        <!-- Tambahkan input sesuai kebutuhan -->
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
     <!-- Modal Tambah Antrian -->
     <div class="modal fade " id="modalTambahAntrian" tabindex="-1" aria-labelledby="modalTambahAntrianLabel"
         aria-hidden="true">
@@ -333,6 +280,7 @@
             </div>
         </div>
     </div>
+    <!-- Modal Edit Pasien -->
     <div class="modal fade" id="viewPatientModal" tabindex="-1" aria-labelledby="viewPatientModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable">
@@ -342,30 +290,30 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="viewPatientForm">
+                    <form id="viewPatientForm" action="{{ route('pendaftaran.pasien.update') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="id_pasien" id="viewID">
                         <div class="mb-3">
                             <label for="viewNIK" class="form-label">NIK</label>
                             <input type="text" class="form-control" id="viewNIK" name="nik" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="viewNama" class="form-label">Nama</label>
-                            <input type="text" class="form-control" id="viewNama" name="nama" readonly>
+                            <input type="text" class="form-control" id="viewNama" name="nama_pasien" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="viewTempatLahir" class="form-label">Tempat Lahir</label>
-                            <input type="text" class="form-control" id="viewTempatLahir" name="tempat_lahir"
-                                readonly>
+                            <input type="text" class="form-control" id="viewTempatLahir"
+                                name="tempat_lahir_pasien" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="viewTanggalLahir" class="form-label">Tanggal Lahir</label>
-                            <input type="date" class="form-control" id="viewTanggalLahir" name="tanggal_lahir"
-                                readonly>
+                            <input type="date" class="form-control" id="viewTanggalLahir"
+                                name="tanggal_lahir_pasien" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="viewJenisKelamin" class="form-label">Jenis Kelamin</label>
-                            <select id="viewJenisKelamin" name="jenis_kelamin_pasien"
-                                class="form-control border border-dark" readonly>
-                                <option value="">Pilih Jenis Kelamin</option>
+                            <select id="viewJenisKelamin" name="jenis_kelamin_pasien" class="form-control" readonly>
                                 <option value="L">
                                     Laki-laki</option>
                                 <option value="P">
@@ -374,26 +322,61 @@
                         </div>
                         <div class="mb-3">
                             <label for="viewTelepon" class="form-label">Nomor Telepon</label>
-                            <input type="text" class="form-control" id="viewTelepon" name="telepon" readonly>
+                            <input type="text" class="form-control" id="viewTelepon" name="no_telepon_pasien"
+                                readonly>
                         </div>
                         <div class="mb-3">
                             <label for="viewAlamat" class="form-label">Alamat</label>
-                            <textarea class="form-control" id="viewAlamat" name="alamat" readonly></textarea>
+                            <textarea class="form-control" id="viewAlamat" name="alamat_pasien" readonly></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="viewStatusPernikahan" class="form-label">Status Pernikahan</label>
-                            <input type="text" class="form-control" id="viewStatusPernikahan"
-                                name="status_pernikahan" readonly>
+                            <select id="viewStatusPernikahan" name="status_pernikahan" class="form-control" readonly>
+                                <option value="Belum Menikah">
+                                    Belum Menikah</option>
+                                <option value="Menikah">
+                                    Menikah</option>
+                                <option value="Cerai Hidup">
+                                    Cerai Hidup</option>
+                                <option value="Cerai Mati">
+                                    Cerai Mati</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="viewKeluarga" class="form-label">Nama Keluarga Terdekat</label>
-                            <input type="text" class="form-control" id="viewKeluarga" name="keluarga" readonly>
+                            <input type="text" class="form-control" id="viewKeluarga"
+                                name="nama_keluarga_terdekat" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="viewKeluarga" class="form-label">Nama Keluarga Terdekat</label>
+                            <input type="text" class="form-control" id="viewNomorKeluarga"
+                                name="no_telepon_keluarga_terdekat" readonly>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-secondary" id="closePatientButton"
+                        style="display: none;">Tutup</button>
                     <button type="button" class="btn btn-primary" id="editPatientButton">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Konfirmasi -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Konfirmasi Tindakan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="confirmModalMessage">
+                    <!-- Pesan konfirmasi akan diisi oleh JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="confirmModalConfirmBtn">Lanjutkan</button>
                 </div>
             </div>
         </div>
@@ -512,54 +495,119 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        var confirmModal = document.getElementById('confirmModal');
+        var confirmModalMessage = document.getElementById('confirmModalMessage');
+        var confirmModalConfirmBtn = document.getElementById('confirmModalConfirmBtn');
+
+        confirmModal.addEventListener('show.bs.modal', function(event) {
+            var button = event.relatedTarget; // Tombol yang memicu modal
+            var message = button.getAttribute('data-message'); // Pesan dari tombol
+            var url = button.getAttribute('data-url'); // URL dari tombol
+
+            // Set pesan dalam modal
+            confirmModalMessage.textContent = message;
+
+            // Set aksi saat tombol "Lanjutkan" diklik
+            confirmModalConfirmBtn.onclick = function() {
+                window.location.href = url;
+            };
+        });
         // Tangkap event klik tombol lihat
         $(document).on('click', '.btn-view-patient', function() {
+            const id = $(this).data('id');
             const nik = $(this).data('nik');
             const nama = $(this).data('nama');
-            const tempatLahir = $(this).data('tempatLahir');
-            const tanggalLahir = $(this).data('tanggalLahir');
-            const jenisKelamin = $(this).data('jenisKelamin') === 'L' ? 'Laki-laki' :
-                'Perempuan'; // Kondisi jenis kelamin
+            const tempatLahir = $(this).data('tempat-lahir');
+            const tanggalLahir = $(this).data('tanggal-lahir');
+            const jenisKelamin = $(this).data('jenis-kelamin'); // Nilai langsung (L/P)
             const telepon = $(this).data('telepon');
             const alamat = $(this).data('alamat');
-            const statusPernikahan = $(this).data('statusPernikahan');
-            const keluarga = $(this).data('keluarga');
+            const statusPernikahan = $(this).data('status-pernikahan');
+            const keluarga = $(this).data('nama-keluarga');
+            const noKeluarga = $(this).data('nomor-keluarga');
 
             // Isi data ke modal
+            $('#viewID').val(id);
             $('#viewNIK').val(nik);
             $('#viewNama').val(nama);
             $('#viewTempatLahir').val(tempatLahir);
             $('#viewTanggalLahir').val(tanggalLahir);
-            $('#viewJenisKelamin').val(jenisKelamin);
+            $('#viewJenisKelamin').val(jenisKelamin); // Setel dropdown dengan nilai L/P
             $('#viewTelepon').val(telepon);
             $('#viewAlamat').val(alamat);
             $('#viewStatusPernikahan').val(statusPernikahan);
             $('#viewKeluarga').val(keluarga);
+            $('#viewNomorKeluarga').val(noKeluarga);
 
             // Tampilkan modal
             const modal = new bootstrap.Modal(document.getElementById('viewPatientModal'));
             modal.show();
         });
 
-        // Tangkap event klik tombol edit
+
+        let isEditing = false; // Flag untuk mengecek mode Edit
+
         document.getElementById('editPatientButton').addEventListener('click', function() {
-            // Ubah semua input menjadi bisa diedit
             const inputs = document.querySelectorAll(
                 '#viewPatientForm input, #viewPatientForm textarea');
-            inputs.forEach(input => input.removeAttribute('readonly'));
+            const selects = document.querySelectorAll('#viewPatientForm select');
+            const closeButton = document.getElementById('closePatientButton');
 
-            // Ganti tombol menjadi "Simpan"
-            this.textContent = 'Simpan';
-            this.classList.remove('btn-primary');
-            this.classList.add('btn-success');
+            if (!isEditing) {
+                // Masuk ke mode Edit
+                inputs.forEach(input => input.removeAttribute('readonly'));
+                selects.forEach(select => select.removeAttribute('readonly'));
 
-            // Tambahkan logika penyimpanan jika tombol diklik lagi
-            this.addEventListener('click', function() {
-                // Kirim form untuk penyimpanan (sesuaikan dengan backend Anda)
+                this.textContent = 'Simpan';
+                this.classList.remove('btn-primary');
+                this.classList.add('btn-success');
+
+                closeButton.style.display = 'inline-block'; // Tampilkan tombol Tutup
+                isEditing = true; // Set status menjadi Editing
+            } else {
+                // Jika tombol ditekan lagi, submit form
                 document.getElementById('viewPatientForm').submit();
-            }, {
-                once: true
-            });
+            }
+        });
+
+        // Fungsi reset form dan tombol Edit
+        function resetFormAndButton() {
+            const inputs = document.querySelectorAll('#viewPatientForm input, #viewPatientForm textarea');
+            const selects = document.querySelectorAll('#viewPatientForm select');
+            const editButton = document.getElementById('editPatientButton');
+            const closeButton = document.getElementById('closePatientButton');
+
+            // Set semua input dan select ke readonly
+            inputs.forEach(input => input.setAttribute('readonly', true));
+            selects.forEach(select => select.setAttribute('readonly', true));
+
+            // Reset tombol Edit
+            editButton.textContent = 'Edit';
+            editButton.classList.remove('btn-success');
+            editButton.classList.add('btn-primary');
+
+            // Sembunyikan tombol Tutup
+            closeButton.style.display = 'none';
+
+            isEditing = false; // Reset flag
+        }
+
+        // Event handler untuk tombol Tutup
+        document.getElementById('closePatientButton').addEventListener('click', function() {
+            resetFormAndButton();
+        });
+
+        // Event handler untuk saat modal ditutup
+        $('#viewPatientModal').on('hidden.bs.modal', function() {
+            resetFormAndButton(); // Reset form dan tombol saat modal ditutup
+        });
+
+
+
+
+        document.getElementById('formTambahPasien').addEventListener('submit', function() {
+            // Tampilkan spinner saat form dikirim
+            document.getElementById('spinner').classList.remove('d-none');
         });
 
         // Reset modal saat ditutup
@@ -752,7 +800,8 @@
                 }, // Kirim ID poli ke server
                 success: function(response) {
                     if (response.status === 'kosong') {
-                        $('#jadwalContainer').html('<span class="text-danger">Jadwal kosong</span>');
+                        $('#jadwalContainer').html(
+                            '<span class="text-danger">Jadwal kosong</span>');
                     } else {
                         response.data.forEach(function(item) {
                             // Konversi tanggal menggunakan Intl.DateTimeFormat

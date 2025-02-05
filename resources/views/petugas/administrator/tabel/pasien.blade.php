@@ -1,21 +1,22 @@
 <table class="table table-hover table-bordered shadow-sm">
-    <thead>
+    <thead class="table-success">
         <tr>
-            <th>No Rekam Medis</th>
+            <th>Nomor Rekam Medis</th>
             <th>Nik</th>
             <th>Pasien</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach ($pasien as $index => $item)
             <tr>
                 {{-- <td>{{ ($pasien->currentPage() - 1) * $pasien->perPage() + $loop->iteration }}</td> --}}
-                <td>{{ $item->nik }}</td>
                 <td>{{ $item->no_rekam_medis }}</td>
+                <td>{{ $item->nik }}</td>
                 <td>{{ $item->nama_pasien }}</td>
                 <td class="text-nowrap">
                     <button class="btn btn-primary btn-view-patient" data-id="{{ $item->id_pasien }}"
-                        data-nik="{{ $item->id_pasien }}" data-nama="{{ $item->nama_pasien }}"
+                        data-nik="{{ $item->nik }}" data-nama="{{ $item->nama_pasien }}"
                         data-tempat-lahir="{{ $item->tempat_lahir_pasien }}"
                         data-tanggal-lahir="{{ $item->tanggal_lahir_pasien }}" data-jenis-kelamin="{{ $item->jk_pasien }}"
                         data-telepon="{{ $item->no_telepon_pasien }}" data-alamat="{{ $item->alamat_pasien }}"
@@ -28,7 +29,12 @@
                         data-noRM="{{ $item->no_rekam_medis }}" data-namaPasien="{{ $item->nama_pasien }}">
                         <i class="bi bi-pencil"></i>
                     </button> --}}
-                    <button class="btn btn-danger btn-delete-jadwal" data-id="{{ $item->id_pasien }}">
+                    {{-- <button class="btn btn-danger btn-delete-patient" data-id="{{ $item->id_pasien }}">
+                        <i class="bi bi-trash"></i>
+                    </button> --}}
+                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal"
+                        data-url="{{ route('pendaftaran.pasien.delete', $item->id_pasien) }}"
+                        data-message="Hapus {{ $item->nama_pasien }}?">
                         <i class="bi bi-trash"></i>
                     </button>
                 </td>

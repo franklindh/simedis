@@ -21,8 +21,8 @@ class PemeriksaanSeeder extends Seeder
      */
     public function run()
     {
-        // Ambil semua id_antrian dari bulan November 2024
-        $antrianNovember = DB::table('antrian')
+        // Ambil semua id_antrian dari bulan Desember 2024
+        $antrianDesember = DB::table('antrian')
             ->whereMonth('created_at', 11)
             ->whereYear('created_at', 2024)
             ->pluck('id_antrian');
@@ -67,11 +67,18 @@ class PemeriksaanSeeder extends Seeder
             ],
         ];
 
-        // Looping untuk setiap antrian di bulan November
-        foreach ($antrianNovember as $antrianId) {
+        // Looping untuk setiap antrian di bulan Desember
+        foreach ($antrianDesember as $antrianId) {
             $randomData = $dummyData[array_rand($dummyData)]; // Pilih data dummy secara acak
             $randomIcd = $icdIds->random(); // Pilih id_icd secara acak
-            $randomDate = Carbon::create(2024, 11, rand(1, 30), rand(8, 16), rand(0, 59), 0);
+
+            // Ambil tanggal dari antrian untuk memastikan konsistensi
+            $tanggalAntrian = DB::table('antrian')
+                ->where('id_antrian', $antrianId)
+                ->value('created_at');
+
+            $randomDate = Carbon::parse($tanggalAntrian)
+                ->setTime(rand(8, 15), rand(0, 59), 0); // Buat waktu acak berdasarkan tanggal antrian
 
             DB::table('pemeriksaan')->insert([
                 'id_antrian' => $antrianId,
@@ -91,4 +98,5 @@ class PemeriksaanSeeder extends Seeder
             ]);
         }
     }
+
 }

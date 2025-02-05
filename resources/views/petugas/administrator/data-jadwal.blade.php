@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        @if ($errors->any())
+        {{-- @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
                     @foreach ($errors->all() as $error)
@@ -8,7 +8,7 @@
                     @endforeach
                 </ul>
             </div>
-        @endif
+        @endif --}}
     </x-slot>
     <section class="section">
         <div id="card-utama" class="card fixed-card mb-4">
@@ -34,19 +34,22 @@
                     @csrf
                     <div class="mb-3">
                         <label for="tanggal_praktik" class="form-label">Tanggal Praktik</label>
-                        <input type="date" id="tanggal_praktik" name="tanggal_praktik" class="form-control" required>
+                        <input type="date" id="tanggal_praktik" name="tanggal_praktik" class="form-control w-25"
+                            required>
                     </div>
                     <div class="mb-3">
-                        <label for="poli" class="form-label">Poli</label>
-                        <select id="poli" name="id_poli" class="form-control" required>
+                        <label for="poli" class="form-label">Poli</label><br>
+                        <select id="poli" name="id_poli" class="form-control w-25" required>
+                            <option value=""></option>
                             @foreach ($poli as $p)
                                 <option value="{{ $p->id_poli }}">{{ $p->nama_poli }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="petugas" class="form-label">Petugas</label>
-                        <select id="petugas" name="id_petugas" class="form-control" required>
+                        <label for="petugas" class="form-label">Dokter</label><br>
+                        <select id="petugas" name="id_petugas" class="form-control w-25" required>
+                            <option value=""></option>
                             @foreach ($petugas as $petugasItem)
                                 <option value="{{ $petugasItem->id_petugas }}">{{ $petugasItem->nama_petugas }}</option>
                             @endforeach
@@ -54,11 +57,12 @@
                     </div>
                     <div class="mb-3">
                         <label for="waktu_mulai" class="form-label">Waktu Mulai</label>
-                        <input type="time" id="waktu_mulai" name="waktu_mulai" class="form-control" required>
+                        <input type="time" id="waktu_mulai" name="waktu_mulai" class="form-control w-25" required>
                     </div>
                     <div class="mb-3">
                         <label for="waktu_selesai" class="form-label">Waktu Selesai</label>
-                        <input type="time" id="waktu_selesai" name="waktu_selesai" class="form-control" required>
+                        <input type="time" id="waktu_selesai" name="waktu_selesai" class="form-control w-25"
+                            required>
                     </div>
                     {{-- <div class="mb-3">
                         <label for="keterangan" class="form-label">Keterangan</label>
@@ -84,7 +88,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="editPoli" class="form-label">Poli</label>
+                            <label for="editPoli" class="form-label">Poli</label><br>
                             <select id="editPoli" class="form-control" name="id_poli" required>
                                 @foreach ($poli as $p)
                                     <option value="{{ $p->id_poli }}">{{ $p->nama_poli }}</option>
@@ -94,7 +98,7 @@
 
                         <!-- Pilihan Petugas -->
                         <div class="mb-3">
-                            <label for="editPetugas" class="form-label">Petugas</label>
+                            <label for="editPetugas" class="form-label">Dokter</label><br>
                             <select id="editPetugas" class="form-control" name="id_petugas" required>
                                 @foreach ($petugas as $petugasItem)
                                     <option value="{{ $petugasItem->id_petugas }}">{{ $petugasItem->nama_petugas }}
@@ -155,8 +159,53 @@
         </div>
     </div>
 </x-app-layout>
+<style>
+    /* Menargetkan Select2 di dalam modal saja */
+    #editJadwalModal .select2-container {
+        width: 50% !important;
+        /* Lebar penuh hanya untuk Select2 di modal */
+    }
+</style>
 <script>
     $(document).ready(function() {
+        $('#petugas').select2({
+            placeholder: "-- Dokter --",
+            allowClear: true,
+            language: {
+                noResults: function() {
+                    return "Petugas tidak ditemukan";
+                }
+            }
+        });
+        $('#poli').select2({
+            placeholder: "-- Poli --",
+            allowClear: true,
+            language: {
+                noResults: function() {
+                    return "Poli tidak ditemukan";
+                }
+            }
+        });
+        $('#editPoli').select2({
+            dropdownParent: $('#editJadwalModal'), // Agar dropdown tetap berada dalam modal
+            placeholder: "-- Poli --",
+            allowClear: false,
+            language: {
+                noResults: function() {
+                    return "Poli tidak ditemukan";
+                }
+            }
+        });
+        $('#editPetugas').select2({
+            dropdownParent: $('#editJadwalModal'), // Agar dropdown tetap berada dalam modal
+            placeholder: "-- Petugas --",
+            allowClear: false,
+            language: {
+                noResults: function() {
+                    return "Petugas tidak ditemukan";
+                }
+            }
+        });
         // Pagination
         $(document).on('click', '#data-jadwal .pagination a', function(event) {
             event.preventDefault();
@@ -194,6 +243,9 @@
             $('#editPoli').val(id_poli);
             $('#editPetugas').val(id_petugas);
 
+            $('#editPoli').val(id_poli).trigger('change');
+            $('#editPetugas').val(id_petugas).trigger('change');
+
             $('#editJadwalModal').modal('show');
         });
 
@@ -203,5 +255,36 @@
             $('#deleteJadwalForm').attr('action', '/administrasi/data/jadwal/' + id);
             $('#deleteJadwalModal').modal('show');
         });
+
+
+        const inputTanggal = document.getElementById('tanggal_praktik');
+        const today = new Date().toISOString().split('T')[
+            0]; // Ambil tanggal hari ini dalam format YYYY-MM-DD
+        inputTanggal.min = today; // Tetapkan minimal tanggal ke hari ini
+
+
+        let notyf = new Notyf({
+            duration: 1500, // Durasi notifikasi
+            position: {
+                x: 'right', // posisi X (left/right)
+                y: 'top', // posisi Y (top/bottom)
+            }
+        });
+
+        @if (session('success'))
+            notyf.success('{{ session('success') }}');
+        @elseif (session('error'))
+            notyf.error('{{ session('error') }}');
+        @elseif (session('info'))
+            notyf.open({
+                type: 'info',
+                message: '{{ session('info') }}'
+            });
+        @elseif (session('warning'))
+            notyf.open({
+                type: 'warning',
+                message: '{{ session('warning') }}'
+            });
+        @endif
     });
 </script>

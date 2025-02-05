@@ -12,12 +12,13 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('nilai_rujukan', function (Blueprint $table) {
-            $table->id();
+        Schema::create('jenis_pemeriksaan_lab', function (Blueprint $table) {
+            $table->id('id_jenis_pemeriksaan');
             $table->string('nama_pemeriksaan'); // Nama indikator pemeriksaan
             $table->string('satuan')->nullable(); // Satuan indikator (mg/dL, %, dsb.)
             $table->string('nilai_rujukan')->nullable(); // Nilai rujukan
             $table->string('kriteria')->nullable(); // Kriteria khusus (umur, jenis kelamin, dll.)
+
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('nilai_rujukan');
+        Schema::dropIfExists('jenis_pemeriksaan_lab');
     }
 };

@@ -1,5 +1,5 @@
 <table class="table table-hover table-bordered shadow-sm">
-    <thead>
+    <thead class="table-success">
         <tr>
             <th>No</th>
             <th>Username</th>
@@ -21,7 +21,7 @@
                 <td>{{ $item->username_petugas }}</td>
                 <td>{{ $item->nama_petugas }}</td>
                 <td>{{ $item->role }} </td>
-                <td>{{ $item->nama_poli ?? '' }} </td>
+                <td>{{ $item->nama_poli ?? '-' }} </td>
                 <td>
                     @if ($item->status == 'aktif')
                         <span class="badge bg-success">
@@ -34,12 +34,20 @@
                     @endif
                 </td>
                 <td>
+
                     @if (Auth::guard('petugas')->user()->id_petugas !== $item->id_petugas)
+                        <button class="btn btn-primary btn-edit-pengguna" data-id="{{ $item->id_petugas }}"
+                            data-username="{{ $item->username_petugas }}" data-nama="{{ $item->nama_petugas }}"
+                            data-peran="{{ $item->role }}" data-poli-id="{{ $item->id_poli }}"
+                            data-status="{{ $item->status }}">
+                            <i class="bi bi-pencil"></i>
+                        </button>
                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal"
                             data-url="{{ route('data.pengguna.reset-password', $item->id_petugas) }}"
                             data-message="Apakah Anda yakin ingin mereset password untuk pengguna ini?">Reset
                             Password</button>
-                        @if ($item->status == 'aktif')
+
+                        {{-- @if ($item->status == 'aktif')
                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal"
                                 data-url="{{ route('data.pengguna.nonaktif-petugas', $item->id_petugas) }}"
                                 data-message="Apakah Anda yakin ingin menonaktifkan pengguna ini?">
@@ -51,18 +59,12 @@
                                 data-message="Apakah Anda yakin ingin mengaktifkan kembali pengguna ini?">
                                 Aktifkan
                             </button>
-                        @endif
+                        @endif --}}
                     @else
                         {{-- <span class="text-muted">Tidak dapat mengubah status diri sendiri</span> --}}
                     @endif
-                    <button class="btn btn-sm btn-primary btn-edit-pengguna" data-id="{{ $item->id_petugas }}"
-                        data-username="{{ $item->username_petugas }}" data-nama="{{ $item->nama_petugas }}"
-                        data-peran="{{ $item->role }}" data-poli-id="{{ $item->id_poli }}">
-                        Edit
-                    </button>
+
                 </td>
-
-
             </tr>
         @endforeach
     </tbody>

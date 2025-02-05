@@ -19,8 +19,13 @@ return new class extends Migration {
             $table->string('nomor_antrian');
             $table->enum('prioritas', ['Gawat', 'Non Gawat'])->default('Non Gawat');
             $table->enum('status', ['Menunggu', 'Menunggu Diagnosis', 'Selesai'])->default('Menunggu');
+
+            $table->softDeletes();
+
             $table->foreign('id_jadwal')->references('id_jadwal')->on('jadwal')->onDelete('cascade');
             $table->foreign('id_pasien')->references('id_pasien')->on('pasien')->onDelete('cascade');
+
+
             $table->timestamps();
         });
     }

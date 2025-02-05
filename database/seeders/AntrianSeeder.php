@@ -19,9 +19,10 @@ class AntrianSeeder extends Seeder
      */
     public function run()
     {
-        // Tentukan rentang tanggal 3 bulan kebelakang
-        $startDate = Carbon::now()->subMonths(3);
-        $endDate = Carbon::now();
+        // Tentukan rentang tanggal untuk bulan Desember 2024
+        $startDate = Carbon::create(2024, 11, 1);
+        $endDate = Carbon::create(2024, 11, 31);
+
         $polis = [
             1 => 'G', // Gigi
             2 => 'A', // Anak
@@ -30,19 +31,22 @@ class AntrianSeeder extends Seeder
             5 => 'L'  // Lansia
         ]; // Inisial berdasarkan poli
         $pasienIds = DB::table('pasien')
-            ->pluck('id_pasien'); // Contoh ID Pasien
+            ->pluck('id_pasien'); // Ambil ID Pasien
         $statuses = ['Menunggu'];
         $priorities = ['Gawat', 'Non Gawat'];
 
+        // Ambil jadwal dengan tanggal acak
         $jadwals = DB::table('jadwal')
-            ->whereMonth('tanggal_praktik', 11)
-            ->whereYear('tanggal_praktik', 2024)
+            ->whereBetween('tanggal_praktik', [$startDate->toDateString(), $endDate->toDateString()])
             ->get();
 
-
         foreach ($jadwals as $jadwal) {
-            foreach ($pasienIds as $pasienId) {
-                // Generate data antrian
+            // Ambil jumlah antrian acak untuk setiap jadwal
+            $jumlahAntrian = rand(1, 5); // Maksimal 5 pasien per jadwal
+            $pasienAntrian = $pasienIds->random($jumlahAntrian); // Ambil pasien acak
+
+            foreach ($pasienAntrian as $pasienId) {
+                // Insert data ke tabel antrian
                 DB::table('antrian')->insert([
                     'id_jadwal' => $jadwal->id_jadwal,
                     'id_pasien' => $pasienId,
@@ -55,5 +59,6 @@ class AntrianSeeder extends Seeder
             }
         }
     }
+
 
 }

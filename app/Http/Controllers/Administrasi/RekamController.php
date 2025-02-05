@@ -73,20 +73,24 @@ class RekamController extends Controller
             ->where('pemeriksaan.tanggal_pemeriksaan', $tanggal)
             ->first();
 
+        $dataPemeriksaanLab = DB::table('pemeriksaan_lab')
+            ->join('jenis_pemeriksaan_lab', 'pemeriksaan_lab.nama_pemeriksaan', '=', 'jenis_pemeriksaan_lab.nama_pemeriksaan')
+            ->where('id_pemeriksaan', $dataRekamMedisDetail->id_pemeriksaan)
+            ->get();
+        // dd($dataPemeriksaanLab);
+
         $icd = ICD::find($dataRekamMedisDetail->id_icd);
-        if ($dataRekamMedisDetail == null) {
+        if ($dataRekamMedisDetail == null || $icd == null) {
             return redirect()->back()->with('error', 'Data diagnosis tidak ditemukan');
         }
-
+        // dd($icd);
         $tanggalPemeriksaan = $dataRekamMedisDetail->tanggal_pemeriksaan;
         Carbon::setLocale('id');
         $tanggal = Carbon::parse($tanggalPemeriksaan)->translatedFormat('l, d F Y');
 
         $umur = Carbon::parse($dataRekamMedisDetail->tanggal_lahir_pasien)->age;
 
-        return view('petugas.administrator.detail-rekam-kunjungan', compact('dataRekamMedisDetail', 'tanggal', 'umur', 'icd'));
-
-
+        return view('petugas.administrator.detail-rekam-kunjungan', compact('dataRekamMedisDetail', 'tanggal', 'umur', 'icd', 'dataPemeriksaanLab'));
     }
 
     public function cetak(Request $request)
@@ -136,6 +140,18 @@ class RekamController extends Controller
             ->where('pemeriksaan.id_pemeriksaan', $id)
             ->first();
 
+        $pemeriksaanLab = DB::table('pemeriksaan_lab')
+            ->join('jenis_pemeriksaan_lab', 'pemeriksaan_lab.nama_pemeriksaan', '=', 'jenis_pemeriksaan_lab.nama_pemeriksaan')
+            ->join('pemeriksaan', 'pemeriksaan_lab.id_pemeriksaan', '=', 'pemeriksaan.id_pemeriksaan')
+            ->join('antrian', 'pemeriksaan.id_antrian', '=', 'antrian.id_antrian')
+            ->join('pasien', 'antrian.id_pasien', '=', 'pasien.id_pasien')
+            ->join('jadwal', 'antrian.id_jadwal', '=', 'jadwal.id_jadwal')
+            ->join('poli', 'jadwal.id_poli', '=', 'poli.id_poli')
+            ->join('petugas', 'jadwal.id_petugas', '=', 'petugas.id_petugas')
+            ->select('pemeriksaan_lab.nama_pemeriksaan', 'jenis_pemeriksaan_lab.satuan', 'jenis_pemeriksaan_lab.nilai_rujukan', 'pemeriksaan_lab.kode_lab', 'pemeriksaan.*', 'pasien.*', 'poli.*', 'petugas.*')
+            ->where('pemeriksaan.id_pemeriksaan', $id)
+            ->get();
+
         $jenisKelamin = $dataRekamMedisDetail->jk_pasien;
         $jk = ($jenisKelamin == 'L') ? 'Laki-laki' : 'Perempuan';
 
@@ -150,7 +166,7 @@ class RekamController extends Controller
         Carbon::setLocale('id');
         $tanggalLahir = Carbon::parse($tanggalLahir)->translatedFormat('d F Y');
 
-        $pdf = PDF::loadView('petugas.administrator.pdf.resume-medis', compact('dataRekamMedisDetail', 'umur', 'jk', 'tanggal', 'tanggalLahir'));
+        $pdf = PDF::loadView('petugas.administrator.pdf.resume-medis', compact('dataRekamMedisDetail', 'umur', 'jk', 'tanggal', 'tanggalLahir', 'pemeriksaanLab'));
 
         return $pdf->download("resume-medis-{$dataRekamMedisDetail->nama_pasien}.pdf");
         // return view('petugas.administrator.pdf.resume-medis', compact('dataRekamMedisDetail', 'umur', 'jk', 'diagnosis'));

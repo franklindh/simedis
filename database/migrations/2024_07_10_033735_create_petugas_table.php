@@ -21,6 +21,8 @@ return new class extends Migration {
             $table->enum('role', ['Administrasi', 'Poliklinik', 'Dokter', 'Lab']);
             $table->string('password');
 
+            $table->softDeletes();
+
             $table->foreign('id_poli')->references('id_poli')->on('poli')->onDelete('cascade');
 
             $table->timestamps();

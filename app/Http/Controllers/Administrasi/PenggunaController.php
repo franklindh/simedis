@@ -95,7 +95,7 @@ class PenggunaController extends Controller
 
     public function updatePengguna(Request $request, $id)
     {
-
+        // dd($request->all());
         // Ambil data pengguna berdasarkan ID
         $pengguna = Petugas::findOrFail($id);
         // Validasi data input
@@ -118,6 +118,7 @@ class PenggunaController extends Controller
             'nama_petugas' => $validatedData['nama_petugas'],
             'role' => $validatedData['role'],
             'id_poli' => $validatedData['id_poli'] ?? null, // Null jika poli tidak dipilih
+            'status' => $request->status,
         ]);
 
         // Redirect dengan pesan sukses

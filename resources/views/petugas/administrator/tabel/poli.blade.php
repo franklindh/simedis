@@ -1,5 +1,5 @@
     <table class="table table-hover table-bordered shadow-sm">
-        <thead>
+        <thead class="table-success">
             <tr>
                 <th>Poli</th>
                 <th>Status</th>
@@ -23,25 +23,30 @@
                         @endif
                     </td>
                     <td> <button class="btn btn-primary btn-edit-poli" data-id="{{ $item->id_poli }}"
-                            data-nama="{{ $item->nama_poli }}">
-                            Edit
+                            data-nama="{{ $item->nama_poli }}" data-status="{{ $item->status_poli }}">
+                            <i class="bi bi-pencil"></i>
                         </button>
                         {{-- <button class="btn btn-primary btn-delete-poli" data-id="{{ $item->id_poli }}">
                             Hapus
                         </button> --}}
-                        @if ($item->status_poli == 'aktif')
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal"
+                        {{-- @if ($item->status_poli == 'aktif')
+                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal"
                                 data-url="{{ route('data.poli.nonaktif', $item->id_poli) }}"
-                                data-message="Apakah Anda yakin ingin menonaktifkan poli ini?">
-                                Nonaktifkan
+                                data-message="Nonaktifkan {{ $item->nama_poli }}">
+                                <i class="bi bi-power"></i>
                             </button>
                         @else
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal"
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal"
                                 data-url="{{ route('data.poli.aktif', $item->id_poli) }}"
                                 data-message="Apakah Anda yakin ingin mengaktifkan kembali poli ini?">
-                                Aktifkan
+                                <i class="bi bi-power"></i>
                             </button>
-                        @endif
+                        @endif --}}
+                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal"
+                            data-url="{{ route('data.poli.destroy', $item->id_poli) }}"
+                            data-message="Hapus {{ $item->nama_poli }}?">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             @endforeach

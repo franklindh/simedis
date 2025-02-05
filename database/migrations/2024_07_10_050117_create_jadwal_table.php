@@ -21,6 +21,8 @@ return new class extends Migration {
             $table->time('waktu_selesai');
             $table->string('keterangan')->nullable();
 
+            $table->softDeletes();
+
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->onDelete('cascade');
             $table->foreign('id_poli')->references('id_poli')->on('poli')->onDelete('cascade');
 

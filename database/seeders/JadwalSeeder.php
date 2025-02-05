@@ -18,34 +18,33 @@ class JadwalSeeder extends Seeder
      */
     public function run()
     {
-        // Tentukan rentang tanggal 3 bulan kebelakang
-        $startDate = Carbon::create(2024, 11, 1); // Awal November 2024
-        $endDate = Carbon::create(2024, 11, 30); // Akhir November 2024
-        $poli = DB::table('poli')
-            ->pluck('id_poli');
+        // Tentukan rentang bulan Desember 2024
+        $startDate = Carbon::create(2024, 11, 1); // Awal Desember 2024
+        $endDate = Carbon::create(2024, 11, 31); // Akhir Desember 2024
+        $poli = DB::table('poli')->pluck('id_poli');
         $dokter = DB::table('petugas')
             ->where('role', 'Dokter')
             ->pluck('id_petugas');
         $waktuMulai = '08:00:00';
         $waktuSelesai = '16:00:00';
 
-        while ($startDate->lessThanOrEqualTo($endDate)) {
-            foreach ($poli as $poliId) {
-                foreach ($dokter as $petugasId) {
-                    // Insert jadwal untuk setiap kombinasi poli dan petugas
-                    DB::table('jadwal')->insert([
-                        'id_petugas' => $petugasId,
-                        'id_poli' => $poliId,
-                        'tanggal_praktik' => $startDate->toDateString(),
-                        'waktu_mulai' => $waktuMulai,
-                        'waktu_selesai' => $waktuSelesai,
-                        'keterangan' => 'Jadwal praktik',
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
+        foreach ($poli as $poliId) {
+            foreach ($dokter as $petugasId) {
+                // Generate tanggal acak pada bulan Desember
+                $randomDate = Carbon::createFromTimestamp(mt_rand($startDate->timestamp, $endDate->timestamp));
+
+                // Insert jadwal untuk kombinasi poli dan petugas dengan tanggal acak
+                DB::table('jadwal')->insert([
+                    'id_petugas' => $petugasId,
+                    'id_poli' => $poliId,
+                    'tanggal_praktik' => $randomDate->toDateString(),
+                    'waktu_mulai' => $waktuMulai,
+                    'waktu_selesai' => $waktuSelesai,
+                    'keterangan' => 'Jadwal praktik',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
             }
-            $startDate->addDay(); // Increment hari
         }
     }
 }

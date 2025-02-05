@@ -58,8 +58,8 @@
                             <h6 class="dropdown-header">Halo,
                                 {{ strtok(Auth::guard('petugas')->user()->nama_petugas, ' ') }} !</h6>
                         </li> --}}
-                        <li><a class="dropdown-item" href="{{ route('profile.show') }}"><i
-                                    class="icon-mid bi bi-person me-2"></i> Profil</a></li>
+                        {{-- <li><a class="dropdown-item" href="{{ route('profile.show') }}"><i
+                                    class="icon-mid bi bi-person me-2"></i> Profil</a></li> --}}
                         {{-- @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
                             <li>
                                 <a class="dropdown-item" href="#"><i class="icon-mid bi bi-gear me-2"></i>
@@ -67,9 +67,9 @@
                                 </a>
                             </li>
                         @endif --}}
-                        <li>
+                        {{-- <li>
                             <hr class="dropdown-divider">
-                        </li>
+                        </li> --}}
 
                         <li>
                             <a class="dropdown-item" href="{{ route('logout') }}">

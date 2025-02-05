@@ -1,11 +1,12 @@
 <table class="table table-hover table-bordered shadow-sm">
-    <thead>
+    <thead class="table-success">
         <tr>
             <th>Poli</th>
             <th>Nama Petugas</th>
             <th>Tanggal Praktik</th>
             <th>Waktu Mulai</th>
             <th>Waktu Selesai</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -21,10 +22,10 @@
                         data-poli="{{ $item->id_poli }}" data-petugas="{{ $item->id_petugas }}"
                         data-tanggal="{{ $item->tanggal_praktik }}" data-mulai="{{ $item->waktu_mulai }}"
                         data-selesai="{{ $item->waktu_selesai }}">
-                        Edit
+                        <i class="bi bi-pencil"></i>
                     </button>
-                    <button class="btn btn-primary btn-delete-jadwal" data-id="{{ $item->id_jadwal }}">
-                        Hapus
+                    <button class="btn btn-danger btn-delete-jadwal" data-id="{{ $item->id_jadwal }}">
+                        <i class="bi bi-trash"></i>
                     </button>
                 </td>
             </tr>

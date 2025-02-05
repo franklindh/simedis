@@ -45,7 +45,7 @@ class DashboardController extends Controller
         // Buat Grafik Bar untuk Top 10 ICD
         $chartICD = $dataICD->isEmpty() ? null : (new LarapexChart)->barChart()
             // ->setTitle('Top 10 Diagnosa')
-            ->setSubtitle('Bulan: ' . Carbon::createFromDate($tahun, $bulan, 1)->format('F'))
+            ->setSubtitle('Bulan: ' . Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F'))
             ->addData('Jumlah Kasus', $dataICD->pluck('jumlah_penyakit')->toArray())
             ->setXAxis($dataICD->pluck('nama_penyakit')->toArray());
 
@@ -62,7 +62,7 @@ class DashboardController extends Controller
 
         $chartPoli = $dataPoli->isEmpty() ? null : (new LarapexChart)->barChart()
             // ->setTitle('Kunjungan Pasien ')
-            ->setSubtitle('Bulan: ' . Carbon::createFromDate($tahun, $bulan, 1)->format('F'))
+            ->setSubtitle('Bulan: ' . Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F'))
             ->addData('Jumlah Pasien', $dataPoli->pluck('jumlah_pasien')->toArray())
             ->setXAxis($dataPoli->pluck('nama_poli')->toArray());
 

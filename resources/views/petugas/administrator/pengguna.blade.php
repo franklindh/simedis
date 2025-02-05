@@ -24,8 +24,8 @@
             {{-- <div class="col-12 col-md-6 order-md-2 order-first d-flex justify-content-end mb-2"
                 style="padding-right: 45px;"> --}}
             <div class="col-12 col-md-6 order-md-2 order-first d-flex justify-content-end mb-2">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">Tambah
-                    Pengguna</button>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal"><i
+                        class="bi bi-plus-lg"></i></button>
                 {{-- <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item active" aria-current="page"></li>
@@ -82,9 +82,24 @@
                                 <option value="Administrasi">Administrasi</option>
                                 <option value="Poliklinik">Poliklinik</option>
                                 <option value="Dokter">Dokter</option>
+                                <option value="Lab">Lab</option>
                                 <!-- Tambahkan opsi role lainnya jika ada -->
                             </select>
                             @error('role')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mb-3" id="poliGroup" style="display: none;">
+                            <label for="poli" class="form-label">Poli</label>
+                            <select class="form-select" id="poli" name="poli_id">
+                                <option value="">-- Pilih Poli --</option>
+                                <option value="1">Poli Umum</option>
+                                <option value="2">Poli Gigi</option>
+                                <option value="3">Poli Anak</option>
+                            </select>
+                            @error('poli_id')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
@@ -126,7 +141,8 @@
                     @method('PUT') <!-- Untuk metode PUT -->
                     <div class="modal-header">
                         <h5 class="modal-title" id="editPenggunaModalLabel">Edit Data Pengguna</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <!-- Input Username -->
@@ -149,17 +165,27 @@
                                 <option value="Administrasi">Administrasi</option>
                                 <option value="Poliklinik">Poliklinik</option>
                                 <option value="Dokter">Dokter</option>
+                                <option value="Lab">Lab</option>
                             </select>
                         </div>
 
                         <!-- Pilihan Poli (Opsional) -->
-                        <div class="mb-3">
+                        <div class="mb-3 form-group">
                             <label for="editPoli" class="form-label">Poli</label>
                             <select id="editPoli" class="form-control" name="id_poli">
                                 <option value="">-- Pilih Poli --</option>
                                 @foreach ($poli as $p)
                                     <option value="{{ $p->id_poli }}">{{ $p->nama_poli }}</option>
                                 @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3 form-group">
+                            <label for="editStatus" class="form-label">Status</label>
+                            <select id="editStatus" name="status" class="form-control" required>
+                                <option value="aktif">
+                                    Aktif</option>
+                                <option value="nonaktif">
+                                    Nonaktif</option>
                             </select>
                         </div>
                     </div>
@@ -198,6 +224,28 @@
         }
     });
     document.addEventListener('DOMContentLoaded', function() {
+        const roleSelect = document.getElementById('role');
+        const poliGroup = document.getElementById('poliGroup');
+
+        // Event listener untuk perubahan nilai pada dropdown Role
+        roleSelect.addEventListener('change', function() {
+            if (roleSelect.value === 'Poliklinik') {
+                poliGroup.style.display = 'block'; // Tampilkan dropdown Poli
+            } else {
+                poliGroup.style.display = 'none'; // Sembunyikan dropdown Poli
+            }
+        });
+
+        // Reset dropdown Poli saat modal dibuka
+        $('#addUserModal').on('show.bs.modal', function() {
+            roleSelect.value = ''; // Reset nilai Role
+            poliGroup.style.display = 'none'; // Sembunyikan Poli secara default
+        });
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentUserId = {{ Auth::guard('petugas')->user()->id_petugas }};
         var confirmModal = document.getElementById('confirmModal');
         var confirmModalMessage = document.getElementById('confirmModalMessage');
         var confirmModalConfirmBtn = document.getElementById('confirmModalConfirmBtn');
@@ -222,6 +270,16 @@
             let nama = $(this).data('nama');
             let peran = $(this).data('peran');
             let poliId = $(this).data('poli-id');
+            let status = $(this).data('status');
+
+            // Cek apakah pengguna yang sedang login mencoba mengedit dirinya sendiri
+            if (id == currentUserId) {
+                // Sembunyikan dropdown status
+                $('#editStatus').closest('.form-group').hide();
+            } else {
+                // Tampilkan dropdown status
+                $('#editStatus').closest('.form-group').show();
+            }
 
             // Isi data ke dalam form modal
             $('#editPenggunaForm').attr('action', '/administrasi/data/pengguna/' + id);
@@ -229,11 +287,26 @@
             $('#editNama').val(nama);
             $('#editPeran').val(peran);
             $('#editPoli').val(poliId);
+            $('#editStatus').val(status);
 
+            // Tampilkan dropdown Poli jika Peran adalah Poliklinik
+            if (peran === 'Poliklinik') {
+                $('#editPoli').closest('.form-group').show();
+            } else {
+                $('#editPoli').closest('.form-group').hide();
+            }
             // Tampilkan modal
             $('#editPenggunaModal').modal('show');
         });
-
+        // Event listener untuk perubahan nilai dropdown Peran
+        $('#editPeran').on('change', function() {
+            const selectedPeran = $(this).val();
+            if (selectedPeran === 'Poliklinik') {
+                $('#editPoli').closest('.form-group').show(); // Tampilkan dropdown Poli
+            } else {
+                $('#editPoli').closest('.form-group').hide(); // Sembunyikan dropdown Poli
+            }
+        });
 
         // Inisialisasi Notyf
         let notyf = new Notyf({

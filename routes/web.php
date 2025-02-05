@@ -65,18 +65,21 @@ Route::group(['middleware' => ['petugas:Administrasi']], function () {
         Route::get('/search/pasien', [PendaftaranController::class, 'searchPasien'])->name('search.pasien');
         Route::get('/search/antrian', [PendaftaranController::class, 'searchAntrian'])->name('search.antrian');
 
+        Route::post('/pasien', [PendaftaranController::class, 'updatePasien'])->name('pendaftaran.pasien.update');
+        Route::get('/pasien/{id}', [PendaftaranController::class, 'deletePasien'])->name('pendaftaran.pasien.delete');
+
         Route::prefix('data')->group(function () {
             Route::get('/icd', [DataController::class, 'indexICD'])->name('data.icd');
             Route::post('/icd', [DataController::class, 'storeICD'])->name('data.icd.store');
             Route::put('/icd/{id}', [DataController::class, 'updateICD'])->name('data.icd.update');
-            Route::delete('/icd/{id}', [DataController::class, 'destroyICD'])->name('data.icd.destroy');
+            Route::get('/icd/{id}', [DataController::class, 'destroyICD'])->name('data.icd.destroy');
             Route::get('/icd/nonaktif/{id}', [DataController::class, 'nonaktifICD'])->name('data.icd.nonaktif');
             Route::get('/icd/aktif/{id}', [DataController::class, 'aktifICD'])->name('data.icd.aktif');
 
             Route::get('/poli', [DataController::class, 'indexPoli'])->name('data.poli');
             Route::post('/poli', [DataController::class, 'storePoli'])->name('data.poli.store');
             Route::put('/poli/{id}', [DataController::class, 'updatePoli'])->name('data.poli.update');
-            Route::delete('/poli/{id}', [DataController::class, 'destroyPoli'])->name('data.poli.destroy');
+            Route::get('/poli/{id}', [DataController::class, 'destroyPoli'])->name('data.poli.destroy');
             Route::get('/poli/nonaktif/{id}', [DataController::class, 'nonaktifPoli'])->name('data.poli.nonaktif');
             Route::get('/poli/aktif/{id}', [DataController::class, 'aktifPoli'])->name('data.poli.aktif');
 
@@ -118,8 +121,6 @@ Route::group(['middleware' => ['petugas:*']], function () {
 
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('/laporan/{type}', [DashboardController::class, 'generateLaporan'])->name('laporan.generate');
-
-
 });
 
 Route::group(['middleware' => ['petugas:Poliklinik,Dokter']], function () {
@@ -135,6 +136,7 @@ Route::group(['middleware' => ['petugas:Lab,Dokter']], function () {
     Route::get('/lab/{id}', [PemeriksaanController::class, 'labShow'])->name('lab.show');
     Route::post('/lab', [PemeriksaanController::class, 'labStore'])->name('lab.store');
     Route::get('/lab/generate-pdf/{id}', [PemeriksaanController::class, 'generatePdf'])->name('lab.cetakPDF');
+    Route::get('/lab/generate-permintaan/{id}/{id_pemeriksaan}', [PemeriksaanController::class, 'cetakLab'])->name('lab.cetak');
 
 });
 

@@ -16,6 +16,9 @@ return new class extends Migration {
             $table->id('id_poli');
             $table->string('nama_poli');
             $table->string('status_poli')->default('aktif');
+
+            $table->softDeletes();
+
             $table->timestamps();
         });
     }

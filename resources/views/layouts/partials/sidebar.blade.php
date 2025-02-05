@@ -86,6 +86,13 @@
 
                 @if (Auth::guard('petugas')->user()->role == 'Administrasi')
                     <li class="nav-item">
+                        <!-- Aktif pada route rekam atau cari -->
+                        <a class="nav-link {{ request()->routeIs('rekam') || request()->routeIs('cari') || request()->routeIs('detailByTanggal') ? 'active' : '' }}"
+                            href="{{ route('rekam') }}">
+                            <i class="bi bi-grid-fill"></i>Rekam Medis
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         {{-- <a class="nav-link {{ request()->routeIs('pendaftaran*') ? 'active' : '' }}" --}}
                         <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"
                             href="{{ route('dashboard') }}">

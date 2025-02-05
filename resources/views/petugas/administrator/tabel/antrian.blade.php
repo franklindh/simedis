@@ -4,7 +4,7 @@
     </div>
 @else
     <table id="data-tabel" class="table table-hover table-bordered shadow-sm">
-        <thead>
+        <thead class="table-success">
             <tr>
                 <th scope="col">Nomor Antrian</th>
                 <th scope="col">Pasien</th>

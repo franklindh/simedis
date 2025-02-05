@@ -29,8 +29,11 @@
                     @csrf
                     <div class="mb-3">
                         <label for="kode_icd" class="form-label">Nama Poli</label>
-                        <input type="text" id="nama_poli" name="nama_poli" class="form-control"
+                        <input type="text" id="nama_poli" name="nama_poli" class="form-control w-25"
                             placeholder="Masukkan nama poli" required>
+                        @error('nama_poli')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </form>
@@ -52,6 +55,18 @@
                         <div class="mb-3">
                             <label for="editNamaPoli" class="form-label">Nama Poli</label>
                             <input type="text" id="editNamaPoli" class="form-control" name="nama_poli" required>
+                            @error('nama_poli')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="editNamaPoli" class="form-label">Status Poli</label>
+                            <select id="editStatusPoli" name="status_poli" class="form-control" required>
+                                <option value="aktif">
+                                    Aktif</option>
+                                <option value="nonaktif">
+                                    Nonaktif</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -98,7 +113,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-danger" id="confirmModalConfirmBtn">Lanjutkan</button>
+                    <button type="button" class="btn btn-primary" id="confirmModalConfirmBtn">Lanjutkan</button>
                 </div>
             </div>
         </div>
@@ -142,11 +157,13 @@
             let id = $(this).data('id');
             let nama = $(this).data('nama');
             let deskripsi = $(this).data('deskripsi');
+            let status = $(this).data('status');
 
             // Isi data ke dalam form modal
             $('#editPoliForm').attr('action', '/administrasi/data/poli/' + id);
             $('#editNamaPoli').val(nama);
             $('#editDeskripsiPoli').val(deskripsi);
+            $('#editStatusPoli').val(status);
 
             // Tampilkan modal
             $('#editPoliModal').modal('show');

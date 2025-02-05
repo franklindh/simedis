@@ -25,7 +25,7 @@
             <div class="card-header">
                 <form method="GET" action="{{ route('cari') }}" id="form-pencarian">
                     <div class="mb-2">
-                        <select id="pasien-select" class="form-control" name="id_pasien" style="width: 80%;">
+                        <select id="pasien-select" class="form-control w-50" name="id_pasien" style="">
                             <option value=""></option>
                             @foreach ($pasiens as $pasien)
                                 <option value="{{ $pasien->id_pasien }}"
@@ -87,9 +87,9 @@
                                 readonly>
                         </div>
                         <div class="form-group">
-                            <label for="no_telepon_pasien" style="font-weight: bold;">Nomor Kartu Jaminan</label>
-                            <input type="text" class="form-control" id="no_telepon_pasien" name="no_telepon_pasien"
-                                value="{{ isset($pasienDetail[0]) ? $pasienDetail[0]->no_telepon_pasien : '' }}"
+                            <label for="no_kartu_jaminan" style="font-weight: bold;">Nomor Kartu Jaminan</label>
+                            <input type="text" class="form-control" id="no_kartu_jaminan" name="no_kartu_jaminan"
+                                value="{{ isset($pasienDetail[0]) ? $pasienDetail[0]->no_kartu_jaminan : '' }}"
                                 readonly>
                         </div>
                         <div class="form-group">
@@ -258,11 +258,16 @@
             $('#tempat_lahir').val('');
             $('#no_rm').val('');
             $('#no_telepon_pasien').val('');
+            $('#no_kartu_jaminan').val('');
             $('#alamat_pasien').val('');
             $('#nama_keluarga_terdekat').val('');
-            $('#nomor_telepon_keluarga_terdekat').val('');
+            $('#no_keluarga_terdekat').val('');
             $('#tanggal_lahir').val('');
             $('#umur').val('');
+            $('#status_pernikahan').val('');
+
+
+
 
             $('#data-tabel tbody').empty();
 

@@ -18,6 +18,9 @@ return new class extends Migration {
             $table->string('nama_penyakit');
             $table->string('deskripsi_penyakit')->nullable();
             $table->string('status_icd')->default('aktif');
+
+            $table->softDeletes();
+
             $table->timestamps();
         });
     }

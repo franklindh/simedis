@@ -5,6 +5,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Resume Medis</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+
         <style>
             /* Mengatur halaman PDF menjadi landscape */
             @page {
@@ -74,23 +76,25 @@
                 margin: 5px 0 10px 0;
             }
 
-            .info-section,
+            /* .info-section,
             .section {
                 margin-top: 10px;
-                font-size: 12px;
-            }
+                font-size: 20px;
+            } */
 
-            table {
+            .table-info {
                 width: 100%;
                 border-collapse: collapse;
-                margin-bottom: 20px;
+                margin-top: 5px;
             }
 
-            table th,
-            table td {
-                border: 1px solid #000;
-                padding: 5px;
+            .table-info th,
+            .table-info td {
+                padding: 4px;
+                font-size: 11px;
                 text-align: left;
+                border: 1px solid black;
+                vertical-align: top;
             }
 
             .section-title {
@@ -122,73 +126,23 @@
                     {{-- <img src="{{ public_path('images/logo/puskesmas.png') }}" alt="Logo 2"> --}}
                 </div>
             </div>
-            <h3>HASIL PEMERIKSAAN</h3>
-
-            <table class="table-info">
-                <tr>
-                    <th colspan="3">Nomor Rekam Medis: {{ $dataRekamMedisDetail->no_rekam_medis }}</th>
-                </tr>
-                <tr>
-                    <td>Nama Pasien: {{ $dataRekamMedisDetail->nama_pasien }}</td>
-                    <td>Tanggal Lahir: {{ $tanggalLahir }}</td>
-                    <td>Umur: {{ $umur }} Tahun</td>
-                </tr>
-                <tr>
-                    <td colspan="2">Jenis Kelamin: {{ $jk }}</td>
-                    <td>Tanggal Pemeriksaan: {{ $tanggal }}</td>
-                </tr>
-            </table>
-
-            <div class="info-section">
-                <div class="section-title">I. ANAMNESA</div>
-                <p>Keluhan: {{ $dataRekamMedisDetail->keluhan }}</p>
-                <p>Riwayat Penyakit: {{ $dataRekamMedisDetail->riwayat_penyakit }}</p>
-                <p>Keterangan: {{ $dataRekamMedisDetail->keterangan }}</p>
+            <h3>PERMINTAAN PEMERIKSAAN LABOTORIUM</h3>
+            <div class="info-section" style="border: 1px solid black; padding: 10px; margin-bottom: 20px;">
+                <div>Nama Pasien : {{ $pemeriksaan->nama_pasien }}</div>
+                <div>Tanggal Lahir :
+                    {{ \Carbon\Carbon::parse($pemeriksaan->tanggal_lahir_pasien)->translatedFormat('d F Y') }}</div>
+                <div>Jenis Kelamin : {{ $pemeriksaan->jk_pasien == 'L' ? 'Laki-laki' : 'Perempuan' }}</div>
+                <div>Nomor RM : {{ $pemeriksaan->no_rekam_medis }}</div>
+                <div>Dokter : {{ $pemeriksaan->nama_petugas }}</div>
+                <div>Diagnosa : {{ isset($icd) ? $icd->nama_penyakit : '-' }}</div>
             </div>
 
             <div class="info-section">
-                <div class="section-title">II. PEMERIKSAAN FISIK</div>
-                <p>Keadaan Umum: {{ $dataRekamMedisDetail->keadaan_umum }}</p>
-                <p>Tekanan Darah: {{ $dataRekamMedisDetail->tekanan_darah }} mmHg</p>
-                <p>Suhu: {{ $dataRekamMedisDetail->suhu }}°C</p>
-                <p>Nadi: {{ $dataRekamMedisDetail->nadi }} x/mnt</p>
-                <p>Berat Badan: {{ $dataRekamMedisDetail->berat_badan }} kg</p>
+                <div class="">Kode Lab :</div>
+                <b>{{ $lab->kode_lab }}</b>
             </div>
-            <div class="info-section">
-                <div class="section-title">III. DIAGNOSIS</div>
-                <p>Diagnosis: {{ $dataRekamMedisDetail->nama_penyakit }}</p>
-            </div>
-            <div class="info-section">
-                <div class="section-title">IV. TINDAKAN</div>
-                <p>Tindakan: {{ $dataRekamMedisDetail->tindakan }}</p>
-            </div>
-            <br>
-            <br>
-            <br>
-            @if (isset($pemeriksaanLab))
-                <div class="info-section">
-                    <div class="section-title">V. LAB</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nama Pemeriksaan</th>
-                                <th>Satuan</th>
-                                <th>Nilai Rujukan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($pemeriksaanLab as $item)
-                                <tr>
-                                    <td>{{ $item->nama_pemeriksaan }}</td>
-                                    <td>{{ $item->satuan }}</td>
-                                    <td>{{ $item->nilai_rujukan }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endif
         </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     </body>
 
 </html>

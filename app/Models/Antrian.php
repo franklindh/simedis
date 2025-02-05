@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Antrian extends Model
 {
     use HasFactory;
+
+    use SoftDeletes;
 
     protected $table = 'antrian';
 
@@ -23,7 +26,7 @@ class Antrian extends Model
 
     public function jadwal()
     {
-        return $this->belongsTo(Jadwal::class, 'id_jadwal');
+        return $this->belongsTo(Jadwal::class, 'id_jadwal', 'id_jadwal');
     }
     public function pasien()
     {

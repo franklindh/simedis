@@ -23,7 +23,7 @@
                             @foreach (range(1, 12) as $i)
                                 <option value="{{ $i }}"
                                     {{ $i == request('bulan', date('n')) ? 'selected' : '' }}>
-                                    {{ \Carbon\Carbon::createFromDate(null, $i, 1)->format('F') }}
+                                    {{ \Carbon\Carbon::createFromDate(null, $i, 1)->translatedFormat('F') }}
                                 </option>
                             @endforeach
                         </select>

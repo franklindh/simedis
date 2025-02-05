@@ -87,8 +87,6 @@
                             </div>
                         </div>
                     </div>
-
-
                     <div class="form-group">
                         <label for="tanggal_lahir">Diagnosis</label>
                         <div class="form-control" style="background-color: #E9ECEF;">
@@ -101,6 +99,41 @@
                             <li>{{ $dataRekamMedisDetail->tindakan }}</li>
                         </div>
                     </div>
+                    @if ($dataPemeriksaanLab->count() > 0)
+                        <hr style="border: 3px solid black;">
+                        <div class="form-group">
+                            <label for="tanggal_lahir">Pemeriksaan Lab</label>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+
+                                        <th>Nama Pemeriksaan</th>
+                                        <th>Jenis Pemeriksaan</th>
+                                        <th>Hasil</th>
+                                        <th>Satuan</th>
+                                        <th>Nilai Normal</th>
+
+                                        {{-- <th>Tanggal Dibuat</th> --}}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($dataPemeriksaanLab as $pemeriksaan)
+                                        <tr>
+
+                                            <td>{{ $pemeriksaan->nama_pemeriksaan }}</td>
+                                            <td>{{ $pemeriksaan->jenis_pemeriksaan }}</td>
+                                            <td>{{ $pemeriksaan->hasil }}</td>
+                                            <td>{{ $pemeriksaan->satuan }}</td>
+                                            <td>{{ $pemeriksaan->nilai_rujukan }}</td>
+                                            {{-- <td>{{ \Carbon\Carbon::parse($pemeriksaan->created_at)->format('d-m-Y H:i') }} --}}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

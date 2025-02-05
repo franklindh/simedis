@@ -8,7 +8,7 @@
         {{-- <h5 class="">Login</h5> --}}
         {{-- <p class="auth-subtitle mb-5">Log in with your data that you entered during registration.</p> --}}
 
-        @if (session('status'))
+        {{-- @if (session('status'))
             <div class="mb-4 font-medium text-sm text-green-600">
                 {{ session('status') }}
             </div>
@@ -17,12 +17,15 @@
             <div class="alert alert-danger">
                 {{ $errors->first() }}
             </div>
-        @endif
+        @endif --}}
         <form action="{{ route('logins.authenticate') }}" method="POST">
             @csrf
             <div class="form-group position-relative has-icon-left mb-4">
                 <input class="form-control form-control-xl" type="text" name="username" placeholder="Username"
                     value="{{ old('username') }}">
+                @error('username')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
                 <div class="form-control-icon">
                     <i class="bi bi-person"></i>
                 </div>
@@ -30,6 +33,9 @@
             <div class="form-group position-relative has-icon-left mb-4">
                 <input type="password" class="form-control form-control-xl" name="password" placeholder="Password"
                     placeholder="Password">
+                @error('password')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
                 <div class="form-control-icon">
                     <i class="bi bi-shield-lock"></i>
                 </div>

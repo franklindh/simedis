@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        @if ($errors->any())
+        {{-- @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
                     @foreach ($errors->all() as $error)
@@ -8,7 +8,7 @@
                     @endforeach
                 </ul>
             </div>
-        @endif
+        @endif --}}
 
         <div class="row">
             <div class="col-12">
@@ -42,6 +42,8 @@
                             enctype="multipart/form-data" id="pemeriksaanForm">
                             @csrf
                             <input type="hidden" name="idAntrian" value="{{ $idAntrian }}">
+                            <input type="hidden" name="id_icd"
+                                value="{{ isset($pemeriksaan) && $pemeriksaan->id_icd ? $pemeriksaan->id_icd : '' }}">
                             <!-- Anamnesa Accordion Item -->
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingOne">
@@ -58,7 +60,8 @@
                                         @error('keluhan')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
-                                        <label for="riwayat" class="form-label mt-3">Riwayat Penyakit:</label>
+                                        <label for="riwayat" class="form-label mt-3">Riwayat Penyakit (isi '-' jika
+                                            tidak ada):</label>
                                         <textarea name="riwayat" cols="30" rows="5" class="form-control"
                                             {{ isset($pemeriksaan) ? 'readonly' : '' }}>{{ old('riwayat', $pemeriksaan->riwayat_penyakit ?? '') }}</textarea>
                                         @error('riwayat')
@@ -79,7 +82,7 @@
                                 <div id="collapseTwo" class="accordion-collapse collapse show"
                                     aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
-                                        <select id="keadaan_umum" name="keadaan_umum" class="form-control"
+                                        <select id="keadaan_umum" name="keadaan_umum" class="form-control w-50"
                                             {{ isset($pemeriksaan) ? 'readonly' : '' }}>
                                             <option value="">-- Pilih Keadaan Umum --</option>
                                             <option value="Tampak Sakit"
@@ -194,9 +197,17 @@
                                                         class="form-control select2" multiple="multiple"
                                                         placeholder="-- Pilih Jenis Pemeriksaan --">
                                                         {{-- <option value="">-- Pilih Jenis Pemeriksaan --</option> --}}
-                                                        <option value="Kimia Klinik">Kimia Klinik</option>
-                                                        {{-- <option value="Urine">Urine</option>
+                                                        {{-- <option value="Kimia Klinik">Kimia Klinik</option>
+                                                        <option value="Urine">Urine</option>
                                                         <option value="Hematologi">Hematologi</option> --}}
+
+                                                        @foreach ($groupedPemeriksaan as $kriteria => $items)
+                                                            <option value="{{ $kriteria }}"
+                                                                {{ isset($pemeriksaan) && in_array($kriteria, $pemeriksaanLab->pluck('jenis_pemeriksaan')->toArray()) ? 'selected' : '' }}>
+                                                                {{ $kriteria }}
+                                                            </option>
+                                                        @endforeach
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -219,9 +230,15 @@
                                             </div>
                                             @if (isset($pemeriksaanLab[0]->id_pemeriksaan))
                                                 <!-- Periksa apakah ada data -->
-                                                <a href="{{ route('lab.cetakPDF', ['id' => $pemeriksaanLab[0]->id_pemeriksaan]) }}"
+                                                @if (isset($pemeriksaanLab[0]->hasil))
+                                                    <a href="{{ route('lab.cetakPDF', ['id' => $pemeriksaanLab[0]->id_pemeriksaan]) }}"
+                                                        class="btn btn-primary mt-3">
+                                                        Hasil
+                                                    </a>
+                                                @endif
+                                                <a href="{{ route('lab.cetak', ['id' => $pemeriksaanLab[0]->kode_lab, 'id_pemeriksaan' => $pemeriksaanLab[0]->id_pemeriksaan]) }}"
                                                     class="btn btn-primary mt-3">
-                                                    Cetak PDF
+                                                    Permintaan Pemeriksaan Lab
                                                 </a>
                                             @endif
                                         </div>
@@ -246,16 +263,19 @@
                                         aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                         <div class="accordion-body">
                                             <!-- Dokter dapat memilih ICD -->
-                                            <select id="icd_select" name="icd" class="form-control"
+                                            <select id="icd_select" name="id_icd" class="form-control"
                                                 {{ isset($pemeriksaan->id_icd) ? 'disabled' : '' }}>
                                                 <option value="">-- Pilih ICD --</option>
+                                                {{-- @dd($pemeriksaan) --}}
                                                 @foreach ($kodeIcd as $kI)
                                                     <option value="{{ $kI->id_icd }}"
-                                                        {{ isset($pemeriksaan) && $pemeriksaan->id_icd == $kI->id_icd ? 'selected' : '' }}>
+                                                        {{ old('id_icd', $pemeriksaan->id_icd ?? '') == $kI->id_icd ? 'selected' : '' }}>
                                                         {{ $kI->kode_icd . ' - ' . $kI->nama_penyakit }}
                                                     </option>
                                                 @endforeach
                                             </select>
+
+
                                             @if ($kodeIcd->isEmpty())
                                                 <p class="text-danger mt-2">Belum ada ICD yang dapat dipilih.</p>
                                             @endif
@@ -292,87 +312,19 @@
                             @endif
 
                             <div class="d-flex justify-content-end mt-3 px-3">
-                                <button type="button" id="editButton" class="btn btn-warning me-2">Edit</button>
-                                <button type="submit" class="btn btn-primary">Simpan Pemeriksaan</button>
+                                <!-- Tombol -->
+                                @if (isset($pemeriksaan))
+                                    <!-- Data sudah ada -->
+                                    <button id="editButton" type="button" class="btn btn-primary">Edit</button>
+                                    <button id="saveButton" type="submit" class="btn btn-primary"
+                                        style="display: none; margin-left: 16px">Simpan Pemeriksaan</button>
+                                @else
+                                    <!-- Data belum ada -->
+                                    <button id="saveButton" type="submit" class="btn btn-primary">Simpan
+                                        Pemeriksaan</button>
+                                @endif
                             </div>
                         </form>
-                    </div>
-                </div>
-                <!-- Template Pemeriksaan Gula Darah -->
-                <div id="templateGulaDarah" class="d-none mt-4">
-                    <h5>Kimia Klinik</h5>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="gulaDarahSewaktu"
-                            name="pemeriksaan_lab[]" value="Glukosa Sewaktu">
-                        <label class="form-check-label" for="gulaDarahSewaktu">Glukosa Sewaktu</label>
-                    </div>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="gulaDarahPuasa" name="pemeriksaan_lab[]"
-                            value="Glukosa 2 Jam PP">
-                        <label class="form-check-label" for="gulaDarahPuasa">Glukosa 2 Jam PP</label>
-                    </div>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="gulaDarahPuasa" name="pemeriksaan_lab[]"
-                            value="Glukosa Puasa">
-                        <label class="form-check-label" for="gulaDarahPuasa">Glukosa Puasa</label>
-                    </div>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="gulaDarahPuasa" name="pemeriksaan_lab[]"
-                            value="Asam Urat">
-                        <label class="form-check-label" for="gulaDarahPuasa">Asam Urat</label>
-                    </div>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="gulaDarahPuasa" name="pemeriksaan_lab[]"
-                            value="Kolestrol">
-                        <label class="form-check-label" for="gulaDarahPuasa">Kolestrol</label>
-                    </div>
-                </div>
-                <!-- Template Pemeriksaan Gula Darah -->
-                <div id="templateHematologi" class="d-none mt-4">
-                    <h5>Hematologi</h5>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="gulaDarahSewaktu"
-                            name="pemeriksaan_lab[]" value="Haemoglobin">
-                        <label class="form-check-label" for="gulaDarahSewaktu">Haemoglobin</label>
-                    </div>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="gulaDarahPuasa" name="pemeriksaan_lab[]"
-                            value="Leukosit">
-                        <label class="form-check-label" for="gulaDarahPuasa">Leukosit</label>
-                    </div>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="gulaDarahPuasa" name="pemeriksaan_lab[]"
-                            value="Trombosit">
-                        <label class="form-check-label" for="gulaDarahPuasa">Trombosit</label>
-                    </div>
-                    <!-- Template Pemeriksaan Fungsi Ginjal -->
-                    <div id="templateUrine" class="d-none mt-4">
-                        <h5>Urine</h5>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Kolestrol" name="pemeriksaan_lab[]"
-                                value="Warna">
-                            <label class="form-check-label" for="Kolestrol">Warna</label>
-                        </div>
-                        <div class="form-check mt-2">
-                            <input class="form-check-input" type="checkbox" id="kreatinin" name="pemeriksaan_lab[]"
-                                value="pH">
-                            <label class="form-check-label" for="kreatinin">pH</label>
-                        </div>
-                        <div class="form-check mt-2">
-                            <input class="form-check-input" type="checkbox" id="kreatinin" name="pemeriksaan_lab[]"
-                                value="Berat Jenis">
-                            <label class="form-check-label" for="kreatinin">Berat Jenis</label>
-                        </div>
-                        <div class="form-check mt-2">
-                            <input class="form-check-input" type="checkbox" id="kreatinin" name="pemeriksaan_lab[]"
-                                value="Protein">
-                            <label class="form-check-label" for="kreatinin">Protein</label>
-                        </div>
-                        <div class="form-check mt-2">
-                            <input class="form-check-input" type="checkbox" id="kreatinin" name="pemeriksaan_lab[]"
-                                value="Glukosa">
-                            <label class="form-check-label" for="kreatinin">Glukosa</label>
-                        </div>
                     </div>
                 </div>
     </section>
@@ -426,41 +378,41 @@
                 placeholder: "-- Pilih Jenis Pemeriksaan --",
                 allowClear: true // Menambahkan tombol untuk menghapus pilihan
             });
-
+            const groupedPemeriksaan = @json($groupedPemeriksaan);
             // Event listener untuk perubahan pada Select2
             $('#jenisPemeriksaanLab').on('change', function() {
-                const selectedValues = $(this)
-                    .val(); // Dapatkan nilai yang dipilih (array of values)
+                const selectedValues = $(this).val(); // Ambil nilai yang dipilih
+                console.log('Selected values:', selectedValues); // Debug nilai
 
-                // Hapus form yang tidak lagi dipilih
-                Array.from(dynamicFormContainer.children).forEach(child => {
-                    const formId = child.getAttribute('data-form-id');
-                    if (!selectedValues.includes(formId)) {
-                        child.remove();
-                    }
-                });
+                dynamicFormContainer.innerHTML = ''; // Kosongkan container
 
-                // Tambahkan form untuk setiap pilihan baru
+                // Loop nilai yang dipilih untuk membuat template
                 selectedValues.forEach(value => {
-                    if (!document.querySelector(`[data-form-id="${value}"]`)) {
-                        let template;
-                        if (value === 'Kimia Klinik') {
-                            template = document.getElementById('templateGulaDarah')
-                                .cloneNode(true);
-                        } else if (value === 'Urine') {
-                            template = document.getElementById('templateUrine')
-                                .cloneNode(true);
-                        } else if (value === 'Hematologi') {
-                            template = document.getElementById('templateHematologi')
-                                .cloneNode(true);
-                        }
+                    if (groupedPemeriksaan[value]) {
+                        // Buat elemen div untuk setiap kategori
+                        const categoryDiv = document.createElement('div');
+                        categoryDiv.classList.add('category-container', 'mt-4');
+                        categoryDiv.innerHTML = `<h5>${value}</h5>`; // Judul kategori
 
-                        if (template) {
-                            template.classList.remove('d-none');
-                            template.setAttribute('data-form-id',
-                                value); // Berikan ID form berdasarkan nilai
-                            dynamicFormContainer.appendChild(template);
-                        }
+                        // Loop item dalam kategori
+                        groupedPemeriksaan[value].forEach(item => {
+                            const formGroup = document.createElement('div');
+                            formGroup.classList.add('form-check', 'mt-2');
+                            formGroup.innerHTML = `
+                        <input type="checkbox" class="form-check-input" 
+                               name="pemeriksaan_lab[${value}][]" 
+                               value="${item.nama_pemeriksaan}">
+                        <label class="form-check-label">
+                            ${item.nama_pemeriksaan}
+                        </label>
+                    `;
+                            categoryDiv.appendChild(formGroup);
+                        });
+
+                        dynamicFormContainer.appendChild(
+                            categoryDiv); // Tambahkan kategori ke container
+                    } else {
+                        console.error(`Data for ${value} not found`);
                     }
                 });
             });
@@ -483,6 +435,77 @@
             kodeLabContainer.value = kodeUnik; // Hanya satu kode lab untuk semua pemeriksaan
         });
     });
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleCheckboxLab = document.getElementById('togglePenunjangLab');
+        const penunjangLabCombo = document.getElementById('penunjangLabCombo');
+        const dynamicFormContainer = document.getElementById('dynamicFormContainer');
+        const dynamicFormButton = document.getElementById('dynamicFormButton');
+
+        toggleCheckboxLab.addEventListener('change', function() {
+            if (this.checked) {
+                penunjangLabCombo.classList.remove('d-none');
+                dynamicFormButton.classList.remove('d-none');
+            } else {
+                penunjangLabCombo.classList.add('d-none');
+                dynamicFormContainer.innerHTML = ''; // Bersihkan form
+                dynamicFormButton.classList.add('d-none');
+            }
+        });
+
+        $('#jenisPemeriksaanLab').select2({
+            width: 'resolve',
+            placeholder: '-- Pilih Jenis Pemeriksaan --',
+            allowClear: true
+        });
+
+        // Event listener untuk perubahan pada Select2
+        $('#jenisPemeriksaanLab').on('change', function() {
+            const selectedValues = $(this).val(); // Ambil nilai yang dipilih (array of values)
+
+            // Hapus form yang tidak lagi dipilih
+            Array.from(dynamicFormContainer.children).forEach(child => {
+                const formId = child.getAttribute(
+                    'data-form-id'); // Ambil data-form-id dari elemen
+                if (!selectedValues.includes(formId)) {
+                    child.remove(); // Hapus elemen jika form ID tidak termasuk dalam pilihan
+                }
+            });
+
+            // Tambahkan form baru untuk setiap pilihan yang dipilih
+            selectedValues.forEach(value => {
+                console.log('Selected Value:', value); // Debug nilai yang dipilih
+                const templateId = `template${value.replace(' ', '')}`; // Buat ID template
+                console.log('Looking for template ID:', templateId); // Debug ID template
+
+                const template = document.getElementById(
+                    templateId); // Ambil template berdasarkan ID
+                if (!template) {
+                    console.error(
+                        `Template not found: ${templateId}`
+                    ); // Log error jika template tidak ditemukan
+                } else {
+                    const clone = template.cloneNode(true); // Kloning template
+                    clone.classList.remove('d-none'); // Tampilkan template
+                    clone.setAttribute('data-form-id', value); // Tetapkan ID form ke elemen
+                    dynamicFormContainer.appendChild(clone); // Tambahkan ke container dinamis
+                }
+            });
+        });
+
+        document.getElementById('generateKodeLabButton').addEventListener('click', function() {
+            const selectedPemeriksaan = Array.from(document.querySelectorAll(
+                'input[name="pemeriksaan_lab[]"]:checked')).map(checkbox => checkbox.value);
+            if (selectedPemeriksaan.length === 0) {
+                alert('Silakan pilih minimal satu pemeriksaan lab sebelum mengirim.');
+                return;
+            }
+
+            const kodeLabContainer = document.getElementById('kodeLab');
+            const kodeUnik = 'LAB-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+            kodeLabContainer.value = kodeUnik;
+        });
+    });
+
 
 
     $(document).ready(function() {
@@ -493,7 +516,7 @@
 
     $(document).ready(function() {
         let notyf = new Notyf({
-            duration: 4000, // Durasi notifikasi
+            duration: 1500, // Durasi notifikasi
             position: {
                 x: 'right', // posisi X (left/right)
                 y: 'top', // posisi Y (top/bottom)
@@ -527,6 +550,7 @@
         });
         document.getElementById('editButton').addEventListener('click', function() {
             const button = this; // Tombol edit/batal
+            const saveButton = document.getElementById('saveButton'); // Tombol simpan pemeriksaan
             const formElements = document.querySelectorAll(
                 'textarea, input, select'); // Semua elemen dalam form
 
@@ -537,6 +561,9 @@
                     element.removeAttribute('readonly');
                     element.removeAttribute('disabled');
                 });
+
+                // Tampilkan tombol "Simpan Pemeriksaan"
+                saveButton.style.display = 'inline-block';
 
                 // Ubah tombol menjadi "Batal Edit"
                 button.textContent = 'Batal Edit';
@@ -552,11 +579,15 @@
                     }
                 });
 
+                // Sembunyikan tombol "Simpan Pemeriksaan"
+                saveButton.style.display = 'none';
+
                 // Ubah tombol kembali menjadi "Edit"
                 button.textContent = 'Edit';
                 button.classList.remove('btn-danger');
-                button.classList.add('btn-warning');
+                button.classList.add('btn-primary');
             }
         });
+
     });
 </script>
